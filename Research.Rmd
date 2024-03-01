@@ -1,0 +1,1369 @@
+---
+title: "Initial app with multiple links, Out of Service"
+output: https://github.com/ShanklesJA/PhilonPhil.git
+date: "2023-05-22"
+runtime: shiny
+shiny:
+  app_file: app.R  
+---
+
+```{r setup, include=FALSE}
+
+library(shiny)
+library(ggplot2)
+library(readr)
+library(dplyr)
+library(broom)
+library(tidyr)
+library(tidyverse)
+library(datasets)
+library(gapminder)
+library(corrplot)
+library(sjPlot)
+library(kableExtra)
+library(Metrics)
+library(scales)
+library(remotes)
+library(brochure)
+library(shinythemes)
+library(scales)
+library(ggrepel)
+library(googlesheets4)
+library(googledrive)
+
+```
+
+
+
+
+
+
+```{r}
+
+
+options(rsconnect.timeout = 300)
+options(gargle_oauth_cache = ".secrets/client_secret.json")
+
+drive_auth(path = ".secrets/client_secret.json")
+gs4_auth(path = ".secrets/client_secret.json")
+mainsub <- read_sheet(sheet = 2, "https://docs.google.com/spreadsheets/d/1mj_xHOWpUyKLIT_fJf2-iXRSYcWP7BfUqn77YooPlic/edit#gid=1536770875")
+
+
+
+
+
+```
+
+
+
+
+
+
+
+`
+
+
+
+```{r}
+##Pages and other setup for main app
+
+bsize <- 16
+sz <- 4.4
+plotmain <- mainsub %>% 
+  group_by(aoscategory) %>% 
+  count() %>% 
+  ungroup() %>% 
+  mutate_at('aoscategory', ~replace_na(.,"No Answer")) %>%
+  mutate(perc = n / sum(n)) %>% 
+  arrange(perc) %>%
+  mutate(ypos = cumsum(perc)- 0.5*perc,
+         aoscategory = factor(aoscategory, levels=aoscategory[order(-(perc))], ordered=TRUE))
+
+
+plotmain$perc <- as.numeric(plotmain$perc)
+
+plotmain <- plotmain %>%
+  mutate(labels = percent(perc),
+         labels = factor(labels, levels=labels[order(-(perc))], ordered=TRUE))
+
+plotmain$labels <- as.character(plotmain$labels)
+
+plotmain2 <- mainsub %>% 
+  mutate_at('aoscategory', ~replace_na(.,"No Answer"))
+
+mainsub <- mainsub %>%
+  mutate(
+Philosopherover20 = case_when(
+  Philosopher== "Anscombe" ~ "Anscombe",
+  Philosopher== "Aquinas" ~ "Aquinas",
+  Philosopher== "Aristotle" ~ "Aristotle",
+  Philosopher== "Carnap" ~ "Carnap",
+  Philosopher== "Davidson" ~ "Davidson",
+  Philosopher== "Descartes" ~ "Descartes",
+  Philosopher== "Dewey" ~ "Dewey",
+  Philosopher== "Frege" ~ "Frege",
+  Philosopher== "Hegel" ~ "Hegel",
+  Philosopher== "Hume" ~ "Hume",
+  Philosopher== "Kant" ~ "Kant",
+  Philosopher== "No Answer" ~ "No Answer",
+  Philosopher== "Parfit" ~ "Parfit",
+  Philosopher== "Rawls" ~ "Rawls",
+  TRUE ~ "Other"
+)
+)
+
+log_where <- function(req){
+  cli::cat_rule(
+    sprintf(
+      "%s - %s", 
+      Sys.time(), 
+      req$PATH_INFO
+    )
+  )
+  req
+}
+
+
+
+nav_links <- tags$ul(
+  tags$li(
+    tags$a(href = "/", "Demographics"), 
+  ),
+  tags$li(
+    tags$a(href = "/About", "About Page"), 
+  ),
+  tags$li(
+    tags$a(href = "/Age", "Age"), 
+  ),
+  tags$li(
+    tags$a(href = "/Tradition", "Tradition"), 
+  ),
+  tags$li(
+    tags$a(href = "/AOS", "Area of Specialization"),
+  ),
+  tags$li(
+    tags$a(href = "/Philosopher", "Philosopher Alignment"),
+    
+    tags$li(
+      tags$a(href = "/Nationality", "Nationality"),
+    )
+)
+)
+
+
+ tabsdemo<- tabsetPanel(
+    tabPanel("Age and Gender",  plotOutput("age_gender")),
+    tabPanel("Nationality", plotOutput("nat")),
+    tabPanel("Category of Specialization",plotOutput("aoscpie")),
+    tabPanel("Philosopher Alignment", plotOutput("phil"))
+  )
+tabsabout<- tabsetPanel(
+    tabPanel("Philosophers on Philosophy Paper","Info About the Paper"),
+    tabPanel("Making an App","Info About us and making the paper")
+  )
+  
+ 
+ 
+ tabsage<- tabsetPanel(
+    tabPanel("Table",   tableOutput(outputId = "distPlot")),
+    tabPanel("Bar Graph", plotOutput("bar")),
+    tabPanel("Pie Chart",plotOutput("pie"))
+  )
+
+
+tabstradition<- tabsetPanel(
+    tabPanel("Table",   tableOutput(outputId = "distPlot")),
+    tabPanel("Bar Graph", plotOutput("bar")),
+    tabPanel("Pie Chart",plotOutput("pie"))
+  )
+
+
+tabsaos<- tabsetPanel(
+    tabPanel("Table",   tableOutput(outputId = "distPlot")),
+    tabPanel("Bar Graph", plotOutput("bar")),
+    tabPanel("Pie Chart",plotOutput("pie"))
+  )
+
+
+tabsphilosopher<- tabsetPanel(
+    tabPanel("Table",   tableOutput(outputId = "distPlot")),
+    tabPanel("Bar Graph", plotOutput("bar")),
+    tabPanel("Pie Chart",plotOutput("pie"))
+  )
+
+
+tabsnationality<- tabsetPanel(
+    tabPanel("Table",   tableOutput(outputId = "distPlot")),
+    tabPanel("Bar Graph", plotOutput("bar")),
+    tabPanel("Pie Chart",plotOutput("pie"))
+  )
+
+
+
+
+
+
+pageDemo <- function() {
+page(
+  href = "/",
+    ui = fluidPage(
+      theme = shinytheme("darkly"),
+      h1("Demographics Infromation"), 
+      h5(nav_links),
+      tabsdemo,
+      plotOutput("plot")
+    ),
+    server = function(input, output, session){
+  
+output$age_gender <- renderPlot({
+    ggplot(data = mainsub, aes(x = YOB, fill = Gender)) +
+      geom_histogram(binwidth = 5.5) +
+    theme_bw(base_size = bsize) +
+  ylab("Count") +
+  xlab("Year of Birth") +
+  ggtitle("Breakdown of Year born and Gender")
+  })
+
+  output$nat <- renderPlot({
+    
+    ggplot(data = mainsub, aes( y= fct_rev(fct_infreq(Nationality)))) +
+      geom_bar( fill = "darkgreen") +
+      theme_bw(base_size = bsize) +
+      ylab("Nationality") +
+      xlab("Respondents") +
+      ggtitle("Respondent Nationalities") +
+      geom_text(stat='count', aes(label = ..count..), hjust = -.2, size = 4) +
+      xlim(0,1000)
+    
+  })
+
+  output$aoscpie <- renderPlot({
+    
+
+
+ ggplot(plotmain, aes(x="", y=perc, fill=aoscategory))+
+      geom_bar(width = 1, stat = "identity") +
+      coord_polar("y", start=0) +
+   theme_void(base_size = bsize) +
+      labs(title = "Sample Categories of Specialization", fill = "Category of Specialization") +
+      theme(legend.title = element_text(size = bsize),
+                  legend.key.size = unit(1, "cm"),
+                  legend.text = element_text(size=14)) +
+   geom_label_repel(aes(y = ypos, label = labels),
+                   size = sz, nudge_x = 1, show.legend = FALSE) +
+   scale_fill_brewer(palette="Set3")
+  })    
+        
+  
+  
+    output$phil <- renderPlot({
+    
+      ggplot(data = mainsub, aes( y= fct_rev(fct_infreq(Philosopherover20)))) +
+      geom_bar(fill = "purple") +
+      theme_bw(base_size = bsize) +
+      ylab("Philosopher") +
+      xlab("Count") +
+      ggtitle("Philosopher Alignment") +
+      geom_text(stat='count', aes(label = ..count..), hjust = -.2, size = sz) +
+      xlim(0,600)
+      
+
+    
+  })
+  
+  
+  
+  
+      }
+)
+      }
+
+
+
+pageAbout <- function() {
+page(
+  href = "/About",
+    ui = fluidPage(
+      theme = shinytheme("darkly"),
+      h1("About This Project"), 
+      h5(nav_links),
+      tabsabout,
+    ),
+    server = function(input, output, session){
+  
+
+      }
+)
+      }
+
+
+
+
+
+
+
+pageAge <- function() {
+  page(
+    href = "/Age",
+    ui = function(request) {
+fluidPage(theme = shinytheme("darkly"),
+      tagList(
+        h1("Age"),
+        h5(nav_links),
+        sidebarLayout(
+          # Inputs: Select variables to plot
+          sidebarPanel(
+            selectInput(
+              inputId = "y",
+              label = "Question",
+              choices = gsub('[_]',' ', c("Abortion", "A_Priori", "Abstract_Objects", "Normativity_or_Metaphysically", "Aesthetic_Value", "Aim_of_Philosophy", "Analytic_synthetic_Distinction", "Eating_Animals_Animal_Products", "Epistemic_Justification", "Experience_Machine", "External_World", "Footbridge", "Free_Will", "Gender_Q", "God", "Knowledge_Claims", "Knowledge", "Laws_of_Nature", "Logic", "Meaning_of_Life", "Mental_Content", "Meta_Ethics", "Metaphilosophy", "Mind", "Moral_Judgement", "Moral_Motivation", "Newcombs_Problem", "Normative_Ethics", "Perceptual_Experience", "Personal_Identity", "Philosophical_Progress", "Political_Philosophy", "Proper_Names", "Race", "Science", "Teletransporter", "Time", "Trolley_Problem", "Truth", "Vagueness", "Zombies", "Aesthetic_Experience", "Analysis_of_Knowledge", "Arguments_for_Theism", "Belief_or_Credence", "Capital_Punishment", "Chinese_Room", "Concepts", "Consciousness", "Continuum_Hypothesis", "Cosmological_fine_tuning", "Environmental_Ethics", "Extended_Mind", "Foundations_of_Mathematics", "Gender_Categories", "Grounds_of_Intentionality", "Hard_Problem_of_Consciousness", "Human_Genetic_Engineering", "Hume", "Immortality", "Interlevel_Metaphysics", "Justification", "Kant", "Law", "Material_Composition", "Metaontology", "Method_in_History_of_Philosophy", "Method_in_Political_Philosophy", "Mind_Uploading", "Moral_Principles", "Morality", "Normative_Concepts", "Ought_Implies_Can", "Philosophical_Knowledge", "Plato", "Politics", "Possible_Worlds", "Practical_Reason", "Principle_of_Sufficient_Reason", "Properties", "Propositional_Attitudes", "Propositions", "Quantum_Mechanics", "Race_Categories", "Rational_Disagreement", "Response_to_External_World_Skepticism", "Semantic_Content", "Sleeping_Beauty", "Spacetime", "Statue_and_Lump", "Temporal_Ontology", "Theory_of_Reference", "Time_Travel", "True_Contradictions", "Units_of_Selection", "Values_in_Science", "Well_Being", "Wittgenstein")),
+              selected = "Abortion"
+            ),
+            selectInput(
+              inputId = "x",
+              label = "Age",
+              choices = c("Under 40", "40 to 60", "Older Than 60", "All Ages"),
+              selected = "All Ages"
+            )
+          ),
+     # Outputs: Display the table
+          mainPanel(
+            tabsage,
+          )
+        )
+      )
+)
+    },
+    
+    # Define server
+    server = function(input, output, session) {
+
+##  barcode_first<-reactive({strsplit(req(barcode_first1()),";")[[1]]})
+  
+selectedy1 <- reactive({
+  req(input$y)
+})
+
+selectedy2 <- reactive({
+  strsplit(req(selectedy1()), ";")[[1]]
+})
+
+selectedy <- reactive({
+  gsub('[ ]', '_', selectedy2())
+})
+
+selectedx1 <- reactive({
+  req(input$x)
+})
+
+selectedx <- reactive({
+  strsplit(req(selectedx1()), ";")[[1]]
+})
+
+
+        
+      
+      output$distPlot <- renderTable({
+        
+        
+        
+        if (selectedx() == "All Ages") {
+          kablething <- mainsub %>%
+            pivot_longer(selectedy(), names_to = "Question") %>%
+              count(Question, value) %>%
+            group_by(Question) %>%
+            filter(value != "NA") %>%
+            mutate(pct = percent(n / sum(n)),
+                   Question = str_replace_all(Question, "_", " ")) %>%
+             arrange(desc(n))
+
+          return(kablething)
+          
+        } else if (selectedx() != "All Ages") {
+          kablething <- mainsub %>%
+            filter(Age == selectedx()) %>%
+            pivot_longer(selectedy(), names_to = "Question") %>%
+            count(Question, value) %>%
+            group_by(Question) %>%
+            filter(value != "NA") %>%
+            mutate(pct = percent(n / sum(n)),
+                   Question = str_replace_all(Question, "_", " ")) %>%
+             arrange(desc(n))
+
+          return(kablething)
+        }
+      })
+           output$bar <- renderPlot({
+             
+        
+      
+             if (selectedx() == "All Ages") {
+          bardata <- mainsub %>%
+            pivot_longer(selectedy(), names_to = "Question") %>%
+            count(Question, value) %>%
+            group_by(Question) %>%
+            filter(value != "NA") %>%
+            mutate(n = n)
+
+          plotthing <- ggplot(bardata, aes(y= reorder(value, n), x = n)) +
+      geom_bar(fill = "black", stat = 'identity') +
+      theme_bw(base_size = bsize) +
+      geom_text(stat='identity', aes(label = n), hjust = -.2, size = sz) +
+            xlab("Number of Responses") +
+            ylab("Answer") +
+      xlim(0,1400)
+          
+          return(plotthing)
+          
+        } else if (selectedx() != "All Ages") {
+          bardata <- mainsub %>%
+            filter(Age == selectedx()) %>%
+            pivot_longer(selectedy(), names_to = "Question") %>%
+            count(Question, value) %>%
+            group_by(Question) %>%
+            filter(value != "NA") %>%
+            mutate(n = n)
+
+          
+          
+          
+          plotthing <- ggplot(bardata, aes(y= reorder(value, n), x = n)) +
+      geom_bar(fill = "black", stat = 'identity') +
+      theme_bw(base_size = bsize) +
+      geom_text(stat='identity', aes(label = n), hjust = -.2, size = sz) +
+            xlab("Number of Responses") +
+            ylab("Answer") +
+      xlim(0,1400)
+          
+          
+          return(plotthing)
+        }
+
+          
+        })
+      
+    
+      output$pie <- renderPlot({
+         
+        
+      
+             if (selectedx() == "All Ages") {
+          bardata <- mainsub %>%
+            pivot_longer(selectedy(), names_to = "Question") %>%
+            count(Question, value) %>%
+            group_by(Question) %>%
+            filter(value != "NA") %>%
+            mutate(n = n,
+                   pct = (n / sum(n))) %>%
+            arrange(pct, value) %>%
+            mutate(pos = cumsum(pct)- 0.5*pct,
+                   value = factor(value, levels=value[order(-(pct))], ordered=TRUE)) %>%
+            ungroup() %>%
+  mutate(label = scales::percent(pct))
+
+          plotthing <-  ggplot(bardata, aes(x="", y=pct, fill=value))+
+      geom_bar(width = 1, stat = "identity") +
+      coord_polar(theta = "y", start=0) +
+   theme_void() +
+      labs(fill = "Answer") +
+            theme(legend.title = element_text(size = bsize),
+                  legend.key.size = unit(1, "cm"),
+                  legend.text = element_text(size=14)) +
+   geom_label_repel(aes(y = pos, label = label),
+                   size = sz, nudge_x = 1, show.legend = FALSE) +
+   scale_fill_brewer(palette="Set3")
+          
+          return(plotthing)
+          
+        } else if (selectedx() != "All Ages") {
+          bardata <- mainsub %>%
+            filter(Age == selectedx()) %>%
+            pivot_longer(selectedy(), names_to = "Question") %>%
+            count(Question, value) %>%
+            group_by(Question) %>%
+            filter(value != "NA") %>%
+            mutate(n = n,
+                   pct = (n / sum(n))) %>%
+            arrange(pct, value) %>%
+            mutate(pos = cumsum(pct)- 0.5*pct,
+                   value = factor(value, levels=value[order(-(pct))], ordered=TRUE)) %>%
+            ungroup() %>%
+  mutate(label = scales::percent(pct))
+
+          plotthing <-  ggplot(bardata, aes(x="", y=pct, fill=value))+
+      geom_bar(width = 1, stat = "identity") +
+      coord_polar(theta = "y", start=0) +
+   theme_void() +
+      labs(fill = "Answer") +
+            theme(legend.title = element_text(size = bsize),
+                  legend.key.size = unit(1, "cm"),
+                  legend.text = element_text(size=14)) +
+   geom_label_repel(aes(y = pos, label = label),
+                   size = sz, nudge_x = 1, show.legend = FALSE) +
+   scale_fill_brewer(palette="Set3")
+          
+          return(plotthing)
+        }
+        
+      }) 
+    } 
+  )
+}
+
+
+
+pageTradition <- function() {
+  page(
+    href = "/Tradition",
+    ui = function(request) {
+      fluidPage(theme = shinytheme("darkly"),
+      tagList(
+        h1("Tradition"),
+        h5(nav_links),
+        sidebarLayout(
+          # Inputs: Select variables to plot
+          sidebarPanel(
+            selectInput(
+              inputId = "y",
+              label = "Question",
+              choices = gsub('[_]',' ', c("Abortion", "A_Priori", "Abstract_Objects", "Normativity_or_Metaphysically", "Aesthetic_Value", "Aim_of_Philosophy", "Analytic_synthetic_Distinction", "Eating_Animals_Animal_Products", "Epistemic_Justification", "Experience_Machine", "External_World", "Footbridge", "Free_Will", "Gender_Q", "God", "Knowledge_Claims", "Knowledge", "Laws_of_Nature", "Logic", "Meaning_of_Life", "Mental_Content", "Meta_Ethics", "Metaphilosophy", "Mind", "Moral_Judgement", "Moral_Motivation", "Newcombs_Problem", "Normative_Ethics", "Perceptual_Experience", "Personal_Identity", "Philosophical_Progress", "Political_Philosophy", "Proper_Names", "Race", "Science", "Teletransporter", "Time", "Trolley_Problem", "Truth", "Vagueness", "Zombies", "Aesthetic_Experience", "Analysis_of_Knowledge", "Arguments_for_Theism", "Belief_or_Credence", "Capital_Punishment", "Chinese_Room", "Concepts", "Consciousness", "Continuum_Hypothesis", "Cosmological_fine_tuning", "Environmental_Ethics", "Extended_Mind", "Foundations_of_Mathematics", "Gender_Categories", "Grounds_of_Intentionality", "Hard_Problem_of_Consciousness", "Human_Genetic_Engineering", "Hume", "Immortality", "Interlevel_Metaphysics", "Justification", "Kant", "Law", "Material_Composition", "Metaontology", "Method_in_History_of_Philosophy", "Method_in_Political_Philosophy", "Mind_Uploading", "Moral_Principles", "Morality", "Normative_Concepts", "Ought_Implies_Can", "Philosophical_Knowledge", "Plato", "Politics", "Possible_Worlds", "Practical_Reason", "Principle_of_Sufficient_Reason", "Properties", "Propositional_Attitudes", "Propositions", "Quantum_Mechanics", "Race_Categories", "Rational_Disagreement", "Response_to_External_World_Skepticism", "Semantic_Content", "Sleeping_Beauty", "Spacetime", "Statue_and_Lump", "Temporal_Ontology", "Theory_of_Reference", "Time_Travel", "True_Contradictions", "Units_of_Selection", "Values_in_Science", "Well_Being", "Wittgenstein")),
+              selected = "Abortion"
+            ),
+            selectInput(
+              inputId = "x",
+        label = "Tradition",
+        choices = c("All Traditions","Continental", "Analytic", "Other Traditions" ),
+        selected = "All Traditions"
+            )
+          ),
+     # Outputs: Display the table
+          mainPanel(
+            tabstradition
+          )
+        )
+      )
+      )
+    },
+    
+    # Define server
+    server <- function(input, output, session) {
+      
+      
+      selectedy1 <- reactive({
+  req(input$y)
+})
+
+selectedy2 <- reactive({
+  strsplit(req(selectedy1()), ";")[[1]]
+})
+
+selectedy <- reactive({
+  gsub('[ ]', '_', selectedy2())
+})
+
+selectedx1 <- reactive({
+  req(input$x)
+})
+
+selectedx <- reactive({
+  strsplit(req(selectedx1()), ";")[[1]]
+})
+
+
+      output$distPlot <- renderTable({
+
+    if (selectedx() == "All Traditions") {
+    kablething <- mainsub %>%
+      pivot_longer(selectedy(), names_to = "Question") %>%
+      count(Question, value) %>%
+      group_by(Question) %>%
+      filter(value != "NA") %>%
+      mutate(pct = percent(n / sum(n)),
+                   Question = str_replace_all(Question, "_", " ")) %>%
+             arrange(desc(n))
+      
+    return(kablething)
+  }
+      else if(selectedx() != "All Traditions") {
+    kablething <- mainsub %>%
+      filter(Tradition == selectedx()) %>%
+      pivot_longer(selectedy(), names_to = "Question") %>%
+      count(Question, value) %>%
+      group_by(Question) %>%
+      filter(value != "NA") %>%
+      mutate(pct = percent(n / sum(n)),
+                   Question = str_replace_all(Question, "_", " ")) %>%
+             arrange(desc(n))
+      
+    return(kablething)
+      }
+      })
+      
+      
+           output$bar <- renderPlot({
+      
+             if (selectedx() == "All Traditions") {
+          bardata <- mainsub %>%
+            pivot_longer(selectedy(), names_to = "Question") %>%
+            count(Question, value) %>%
+            group_by(Question) %>%
+            filter(value != "NA") %>%
+            mutate(n = n)
+
+          plotthing <- ggplot(bardata, aes(y= reorder(value, n), x = n)) +
+      geom_bar(fill = "black", stat = 'identity') +
+      theme_bw(base_size = bsize) +
+      geom_text(stat='identity', aes(label = n), hjust = -.2, size = sz) +
+            xlab("Number of Responses") +
+            ylab("Answer") +
+      xlim(0,1400)
+          
+          return(plotthing)
+          
+          
+          
+        } else if (selectedx() != "All Traditions") {
+          bardata <- mainsub %>%
+            filter(Tradition == selectedx()) %>%
+            pivot_longer(selectedy(), names_to = "Question") %>%
+            count(Question, value) %>%
+            group_by(Question) %>%
+            filter(value != "NA") %>%
+            mutate(n = n)
+
+          
+          plotthing <- ggplot(bardata, aes(y= reorder(value, n), x = n)) +
+      geom_bar(fill = "black", stat = 'identity') +
+      theme_bw(base_size = bsize) +
+      geom_text(stat='identity', aes(label = n), hjust = -.2, size = sz) +
+            xlab("Number of Responses") +
+            ylab("Answer") +
+      xlim(0,1400)
+          
+          return(plotthing)
+        }
+
+        })
+      output$pie <- renderPlot({
+         
+        
+      
+             if (selectedx() == "All Traditions") {
+          bardata <- mainsub %>%
+            pivot_longer(selectedy(), names_to = "Question") %>%
+            count(Question, value) %>%
+            group_by(Question) %>%
+            filter(value != "NA") %>%
+            mutate(n = n,
+                   pct = (n / sum(n))) %>%
+            arrange(pct, value) %>%
+            mutate(pos = cumsum(pct)- 0.5*pct,
+                   value = factor(value, levels=value[order(-(pct))], ordered=TRUE)) %>%
+            ungroup() %>%
+  mutate(label = scales::percent(pct))
+
+          plotthing <-  ggplot(bardata, aes(x="", y=pct, fill=value))+
+      geom_bar(width = 1, stat = "identity") +
+      coord_polar(theta = "y", start=0) +
+   theme_void() +
+      labs(fill = "Answer") +
+            theme(legend.title = element_text(size = bsize),
+                  legend.key.size = unit(1, "cm"),
+                  legend.text = element_text(size=14)) +
+   geom_label_repel(aes(y = pos, label = label),
+                   size = sz, nudge_x = 1, show.legend = FALSE) +
+   scale_fill_brewer(palette="Set3")
+          
+          return(plotthing)
+          
+        } else if (selectedx() != "All Traditions") {
+          bardata <- mainsub %>%
+            filter(Tradition == selectedx()) %>%
+            pivot_longer(selectedy(), names_to = "Question") %>%
+            count(Question, value) %>%
+            group_by(Question) %>%
+            filter(value != "NA") %>%
+            mutate(n = n,
+                   pct = (n / sum(n))) %>%
+            arrange(pct, value) %>%
+            mutate(pos = cumsum(pct)- 0.5*pct,
+                   value = factor(value, levels=value[order(-(pct))], ordered=TRUE)) %>%
+            ungroup() %>%
+  mutate(label = scales::percent(pct))
+
+          plotthing <-  ggplot(bardata, aes(x="", y=pct, fill=value))+
+      geom_bar(width = 1, stat = "identity") +
+      coord_polar(theta = "y", start=0) +
+   theme_void() +
+      labs(fill = "Answer") +
+            theme(legend.title = element_text(size = bsize),
+                  legend.key.size = unit(1, "cm"),
+                  legend.text = element_text(size=14)) +
+   geom_label_repel(aes(y = pos, label = label),
+                   size = sz, nudge_x = 1, show.legend = FALSE) +
+   scale_fill_brewer(palette="Set3")
+          
+          return(plotthing)
+        }
+        
+      }) 
+      
+    } 
+  )
+}
+
+
+
+
+
+pageAOS <- function() {
+  page(
+    href = "/AOS",
+    ui = function(request) {
+      fluidPage(theme = shinytheme("darkly"),
+      tagList(
+        h1("Area of Specialization"),
+        h5(nav_links),
+        sidebarLayout(
+          # Inputs: Select variables to plot
+          sidebarPanel(
+            selectInput(
+              inputId = "y",
+              label = "Question",
+              choices = gsub('[_]',' ', c("Abortion", "A_Priori", "Abstract_Objects", "Normativity_or_Metaphysically", "Aesthetic_Value", "Aim_of_Philosophy", "Analytic_synthetic_Distinction", "Eating_Animals_Animal_Products", "Epistemic_Justification", "Experience_Machine", "External_World", "Footbridge", "Free_Will", "Gender_Q", "God", "Knowledge_Claims", "Knowledge", "Laws_of_Nature", "Logic", "Meaning_of_Life", "Mental_Content", "Meta_Ethics", "Metaphilosophy", "Mind", "Moral_Judgement", "Moral_Motivation", "Newcombs_Problem", "Normative_Ethics", "Perceptual_Experience", "Personal_Identity", "Philosophical_Progress", "Political_Philosophy", "Proper_Names", "Race", "Science", "Teletransporter", "Time", "Trolley_Problem", "Truth", "Vagueness", "Zombies", "Aesthetic_Experience", "Analysis_of_Knowledge", "Arguments_for_Theism", "Belief_or_Credence", "Capital_Punishment", "Chinese_Room", "Concepts", "Consciousness", "Continuum_Hypothesis", "Cosmological_fine_tuning", "Environmental_Ethics", "Extended_Mind", "Foundations_of_Mathematics", "Gender_Categories", "Grounds_of_Intentionality", "Hard_Problem_of_Consciousness", "Human_Genetic_Engineering", "Hume", "Immortality", "Interlevel_Metaphysics", "Justification", "Kant", "Law", "Material_Composition", "Metaontology", "Method_in_History_of_Philosophy", "Method_in_Political_Philosophy", "Mind_Uploading", "Moral_Principles", "Morality", "Normative_Concepts", "Ought_Implies_Can", "Philosophical_Knowledge", "Plato", "Politics", "Possible_Worlds", "Practical_Reason", "Principle_of_Sufficient_Reason", "Properties", "Propositional_Attitudes", "Propositions", "Quantum_Mechanics", "Race_Categories", "Rational_Disagreement", "Response_to_External_World_Skepticism", "Semantic_Content", "Sleeping_Beauty", "Spacetime", "Statue_and_Lump", "Temporal_Ontology", "Theory_of_Reference", "Time_Travel", "True_Contradictions", "Units_of_Selection", "Values_in_Science", "Well_Being", "Wittgenstein")),
+              selected = "Abortion"
+            ),
+            selectInput(
+              inputId = "x",
+        label = "Category of Specialization",
+        choices = c("Metaphysics and Epistimology", "Science, Logic, and Mathematics", "Value Theory", "History of Western Philosophy", "Philosophical Traditions", "All Areas" ),
+        selected = "All Areas"
+            )
+          ),
+     # Outputs: Display the table
+          mainPanel(
+            tabstradition
+          )
+        )
+      )
+      )
+    },
+    
+    # Define server
+    server <- function(input, output, session) {
+      
+      selectedy1 <- reactive({
+  req(input$y)
+})
+
+selectedy2 <- reactive({
+  strsplit(req(selectedy1()), ";")[[1]]
+})
+
+selectedy <- reactive({
+  gsub('[ ]', '_', selectedy2())
+})
+
+selectedx1 <- reactive({
+  req(input$x)
+})
+
+selectedx <- reactive({
+  strsplit(req(selectedx1()), ";")[[1]]
+})
+
+
+      output$distPlot <- renderTable({
+
+  if (selectedx() == "All Areas") {
+    kablething <- mainsub %>%
+      pivot_longer(selectedy(), names_to = "Question") %>%
+      count(Question, value) %>%
+      group_by(Question) %>%
+      filter(value != "NA") %>%
+      mutate(pct = percent(n / sum(n)),
+                   Question = str_replace_all(Question, "_", " ")) %>%
+             arrange(desc(n))
+      
+    return(kablething)
+  }
+      else if(selectedx() != "All Areas") {
+    kablething <- mainsub %>%
+      filter(aoscategory == selectedx()) %>%
+      pivot_longer(selectedy(), names_to = "Question") %>%
+      count(Question, value) %>%
+      group_by(Question) %>%
+      filter(value != "NA") %>%
+      mutate(pct = percent(n / sum(n)),
+                   Question = str_replace_all(Question, "_", " ")) %>%
+             arrange(desc(n))
+      
+    return(kablething)
+}
+      })
+      
+      
+           output$bar <- renderPlot({
+      
+             if (selectedx() == "All Areas") {
+          bardata <- mainsub %>%
+            pivot_longer(selectedy(), names_to = "Question") %>%
+            count(Question, value) %>%
+            group_by(Question) %>%
+            filter(value != "NA") %>%
+            mutate(n = n)
+
+          plotthing <- ggplot(bardata, aes(y= reorder(value, n), x = n)) +
+      geom_bar(fill = "black", stat = 'identity') +
+      theme_bw(base_size = bsize) +
+      geom_text(stat='identity', aes(label = n), hjust = -.2, size = sz) +
+            xlab("Number of Responses") +
+            ylab("Answer") +
+      xlim(0,1400)
+          
+          return(plotthing)
+          
+          
+          
+        } else if (selectedx() != "All Areas") {
+          bardata <- mainsub %>%
+            filter(aoscategory == selectedx()) %>%
+            pivot_longer(selectedy(), names_to = "Question") %>%
+            count(Question, value) %>%
+            group_by(Question) %>%
+            filter(value != "NA") %>%
+            mutate(n = n)
+
+          
+          plotthing <- ggplot(bardata, aes(y= reorder(value, n), x = n)) +
+      geom_bar(fill = "black", stat = 'identity') +
+      theme_bw(base_size = bsize) +
+      geom_text(stat='identity', aes(label = n), hjust = -.2, size = sz) +
+            xlab("Number of Responses") +
+            ylab("Answer") +
+      xlim(0,1400)
+          
+          return(plotthing)
+        }
+
+          
+        })
+      output$pie <- renderPlot({
+         
+        
+      
+             if (selectedx() == "All Areas") {
+          bardata <- mainsub %>%
+            pivot_longer(selectedy(), names_to = "Question") %>%
+            count(Question, value) %>%
+            group_by(Question) %>%
+            filter(value != "NA") %>%
+            mutate(n = n,
+                   pct = (n / sum(n))) %>%
+            arrange(pct, value) %>%
+            mutate(pos = cumsum(pct)- 0.5*pct,
+                   value = factor(value, levels=value[order(-(pct))], ordered=TRUE)) %>%
+            ungroup() %>%
+  mutate(label = scales::percent(pct))
+
+          plotthing <-  ggplot(bardata, aes(x="", y=pct, fill=value))+
+      geom_bar(width = 1, stat = "identity") +
+      coord_polar(theta = "y", start=0) +
+   theme_void(base_size = bsize) +
+      labs(fill = "Answer") +
+            theme(legend.title = element_text(size = bsize),
+                  legend.key.size = unit(1, "cm"),
+                  legend.text = element_text(size=14)) +
+   geom_label_repel(aes(y = pos, label = label),
+                   size = sz, nudge_x = 1, show.legend = FALSE) +
+   scale_fill_brewer(palette="Set3")
+          
+          return(plotthing)
+          
+        } else if (selectedx() != "All Areas") {
+          bardata <- mainsub %>%
+            filter(aoscategory == selectedx()) %>%
+            pivot_longer(selectedy(), names_to = "Question") %>%
+            count(Question, value) %>%
+            group_by(Question) %>%
+            filter(value != "NA") %>%
+            mutate(n = n,
+                   pct = (n / sum(n))) %>%
+            arrange(pct, value) %>%
+            mutate(pos = cumsum(pct)- 0.5*pct,
+                   value = factor(value, levels=value[order(-(pct))], ordered=TRUE)) %>%
+            ungroup() %>%
+  mutate(label = scales::percent(pct))
+
+          plotthing <-  ggplot(bardata, aes(x="", y=pct, fill=value))+
+      geom_bar(width = 1, stat = "identity") +
+      coord_polar(theta = "y", start=0) +
+   theme_void(base_size = bsize) +
+      labs(fill = "Answer") +
+            theme(legend.title = element_text(size = bsize),
+                  legend.key.size = unit(1, "cm"),
+                  legend.text = element_text(size=14)) +
+   geom_label_repel(aes(y = pos, label = label),
+                   size = sz, nudge_x = 1, show.legend = FALSE) +
+   scale_fill_brewer(palette="Set3")
+          
+          return(plotthing)
+        }
+      })
+      
+
+    } 
+  )
+}
+
+
+
+
+
+
+
+pagePhil <- function() {
+  page(
+    href = "/Philosopher",
+    ui = function(request) {
+      fluidPage(theme = shinytheme("darkly"),
+      tagList(
+        h1("Philosopher Alignment"),
+        h5(nav_links),
+        sidebarLayout(
+          # Inputs: Select variables to plot
+          sidebarPanel(
+            selectInput(
+              inputId = "y",
+              label = "Question",
+              choices = gsub('[_]',' ', c("Abortion", "A_Priori", "Abstract_Objects", "Normativity_or_Metaphysically", "Aesthetic_Value", "Aim_of_Philosophy", "Analytic_synthetic_Distinction", "Eating_Animals_Animal_Products", "Epistemic_Justification", "Experience_Machine", "External_World", "Footbridge", "Free_Will", "Gender_Q", "God", "Knowledge_Claims", "Knowledge", "Laws_of_Nature", "Logic", "Meaning_of_Life", "Mental_Content", "Meta_Ethics", "Metaphilosophy", "Mind", "Moral_Judgement", "Moral_Motivation", "Newcombs_Problem", "Normative_Ethics", "Perceptual_Experience", "Personal_Identity", "Philosophical_Progress", "Political_Philosophy", "Proper_Names", "Race", "Science", "Teletransporter", "Time", "Trolley_Problem", "Truth", "Vagueness", "Zombies", "Aesthetic_Experience", "Analysis_of_Knowledge", "Arguments_for_Theism", "Belief_or_Credence", "Capital_Punishment", "Chinese_Room", "Concepts", "Consciousness", "Continuum_Hypothesis", "Cosmological_fine_tuning", "Environmental_Ethics", "Extended_Mind", "Foundations_of_Mathematics", "Gender_Categories", "Grounds_of_Intentionality", "Hard_Problem_of_Consciousness", "Human_Genetic_Engineering", "Hume", "Immortality", "Interlevel_Metaphysics", "Justification", "Kant", "Law", "Material_Composition", "Metaontology", "Method_in_History_of_Philosophy", "Method_in_Political_Philosophy", "Mind_Uploading", "Moral_Principles", "Morality", "Normative_Concepts", "Ought_Implies_Can", "Philosophical_Knowledge", "Plato", "Politics", "Possible_Worlds", "Practical_Reason", "Principle_of_Sufficient_Reason", "Properties", "Propositional_Attitudes", "Propositions", "Quantum_Mechanics", "Race_Categories", "Rational_Disagreement", "Response_to_External_World_Skepticism", "Semantic_Content", "Sleeping_Beauty", "Spacetime", "Statue_and_Lump", "Temporal_Ontology", "Theory_of_Reference", "Time_Travel", "True_Contradictions", "Units_of_Selection", "Values_in_Science", "Well_Being", "Wittgenstein")),
+              selected = "Abortion"
+            ),
+            selectInput(
+              inputId = "x",
+              label = "Philosopher",
+              choices = c("Anscombe", "Aquinas", "Arendt", "Aristotle", "Augustine", "Austin", "Berkeley", "Carnap", "Davidson", "De Beauvoir", "Descartes", "Dewey", "Foucault", "Frege", "Hegel", "Heidegger", "Hobbes", "Hume", "Husserl", "James", "Kant", "Leibniz", "Lewis", "Locke", "No Answer", "Other", "Parfit", "Plato", "Quine", "Rawls", "Russell", "Socrates", "Wittgenstein", "All Philosophers"),
+              selected = "All Philosophers"
+            )
+          ),
+     # Outputs: Display the table
+          mainPanel(
+            tabsphilosopher
+          )
+        )
+      )
+      )
+    },
+    
+    # Define server
+    server = function(input, output, session) {
+      
+      selectedy1 <- reactive({
+  req(input$y)
+})
+
+selectedy2 <- reactive({
+  strsplit(req(selectedy1()), ";")[[1]]
+})
+
+selectedy <- reactive({
+  gsub('[ ]', '_', selectedy2())
+})
+
+selectedx1 <- reactive({
+  req(input$x)
+})
+
+selectedx <- reactive({
+  strsplit(req(selectedx1()), ";")[[1]]
+})
+
+
+      output$distPlot <- renderTable({
+        
+        if (selectedx() == "All Philosophers") {
+          kablething <- mainsub %>%
+            pivot_longer(selectedy(), names_to = "Question") %>%
+            count(Question, value) %>%
+            group_by(Question) %>%
+            filter(value != "NA") %>%
+            mutate(pct = percent(n / sum(n)),
+                   Question = str_replace_all(Question, "_", " ")) %>%
+             arrange(desc(n))
+          
+          return(kablething)
+        } else if (selectedx() != "All Philosophers") {
+          kablething <- mainsub %>%
+            filter(Philosopher == selectedx()) %>%
+            pivot_longer(selectedy(), names_to = "Question") %>%
+            count(Question, value) %>%
+            group_by(Question) %>%
+            filter(value != "NA") %>%
+            mutate(pct = percent(n / sum(n)),
+                   Question = str_replace_all(Question, "_", " ")) %>%
+             arrange(desc(n))
+          
+          return(kablething)
+        }
+      })
+      
+           output$bar <- renderPlot({
+      
+             if (selectedx() == "All Philosophers") {
+          bardata <- mainsub %>%
+            pivot_longer(selectedy(), names_to = "Question") %>%
+            count(Question, value) %>%
+            group_by(Question) %>%
+            filter(value != "NA") %>%
+            mutate(n = n)
+
+          plotthing <- ggplot(bardata, aes(y= reorder(value, n), x = n)) +
+      geom_bar(fill = "black", stat = 'identity') +
+      theme_bw(base_size = bsize) +
+      geom_text(stat='identity', aes(label = n), hjust = -.2, size = sz) +
+            xlab("Number of Responses") +
+            ylab("Answer") +
+      xlim(0,1400)
+          
+          return(plotthing)
+          
+          
+          
+        } else if (selectedx() != "All Philosophers") {
+          bardata <- mainsub %>%
+            filter(Philosopher == selectedx()) %>%
+            pivot_longer(selectedy(), names_to = "Question") %>%
+            count(Question, value) %>%
+            group_by(Question) %>%
+            filter(value != "NA") %>%
+            mutate(n = n)
+
+          
+          plotthing <- ggplot(bardata, aes(y= reorder(value, n), x = n)) +
+      geom_bar(fill = "black", stat = 'identity') +
+      theme_bw(base_size = bsize) +
+      geom_text(stat='identity', aes(label = n), hjust = -.2, size = sz) +
+            xlab("Number of Responses") +
+            ylab("Answer") +
+      xlim(0,1400)
+          
+          return(plotthing)
+        }
+
+          
+        })
+      output$pie <- renderPlot({
+         
+        
+      
+             if (selectedx() == "All Philosophers") {
+          bardata <- mainsub %>%
+            pivot_longer(selectedy(), names_to = "Question") %>%
+            count(Question, value) %>%
+            group_by(Question) %>%
+            filter(value != "NA") %>%
+            mutate(n = n,
+                   pct = (n / sum(n))) %>%
+            arrange(pct, value) %>%
+            mutate(pos = cumsum(pct)- 0.5*pct,
+                   value = factor(value, levels=value[order(-(pct))], ordered=TRUE)) %>%
+            ungroup() %>%
+  mutate(label = scales::percent(pct))
+
+          plotthing <-  ggplot(bardata, aes(x="", y=pct, fill=value))+
+      geom_bar(width = 1, stat = "identity") +
+      coord_polar(theta = "y", start=0) +
+   theme_void() +
+      labs(fill = "Answer") +
+            theme(legend.title = element_text(size = bsize),
+                  legend.key.size = unit(1, "cm"),
+                  legend.text = element_text(size=14)) +
+   geom_label_repel(aes(y = pos, label = label),
+                   size = sz, nudge_x = 1, show.legend = FALSE) +
+   scale_fill_brewer(palette="Set3")
+          
+          return(plotthing)
+          
+        } else if (selectedx() != "All Philosophers") {
+          bardata <- mainsub %>%
+            filter(Philosopher == selectedx()) %>%
+            pivot_longer(selectedy(), names_to = "Question") %>%
+            count(Question, value) %>%
+            group_by(Question) %>%
+            filter(value != "NA") %>%
+            mutate(n = n,
+                   pct = (n / sum(n))) %>%
+            arrange(pct, value) %>%
+            mutate(pos = cumsum(pct)- 0.5*pct,
+                   value = factor(value, levels=value[order(-(pct))], ordered=TRUE)) %>%
+            ungroup() %>%
+  mutate(label = scales::percent(pct))
+
+          plotthing <-  ggplot(bardata, aes(x="", y=pct, fill=value))+
+      geom_bar(width = 1, stat = "identity") +
+      coord_polar(theta = "y", start=0) +
+   theme_void() +
+      labs(fill = "Answer") +
+            theme(legend.title = element_text(size = bsize),
+                  legend.key.size = unit(1, "cm"),
+                  legend.text = element_text(size=14)) +
+   geom_label_repel(aes(y = pos, label = label),
+                   size = sz, nudge_x = 1, show.legend = FALSE) +
+   scale_fill_brewer(palette="Set3")
+          
+          return(plotthing)
+        }
+        
+      }) 
+      
+      
+    
+
+    } 
+  )
+}
+
+
+
+
+
+
+
+pageNat <- function() {
+  page(
+    href = "/Nationality",
+    ui = function(request) {
+      fluidPage(theme = shinytheme("darkly"),
+      tagList(
+        h1("Nationality"),
+        h5(nav_links),
+        sidebarLayout(
+          # Inputs: Select variables to plot
+          sidebarPanel(
+            selectInput(
+              inputId = "y",
+              label = "Question",
+              choices = gsub('[_]',' ', c("Abortion", "A_Priori", "Abstract_Objects", "Normativity_or_Metaphysically", "Aesthetic_Value", "Aim_of_Philosophy", "Analytic_synthetic_Distinction", "Eating_Animals_Animal_Products", "Epistemic_Justification", "Experience_Machine", "External_World", "Footbridge", "Free_Will", "Gender_Q", "God", "Knowledge_Claims", "Knowledge", "Laws_of_Nature", "Logic", "Meaning_of_Life", "Mental_Content", "Meta_Ethics", "Metaphilosophy", "Mind", "Moral_Judgement", "Moral_Motivation", "Newcombs_Problem", "Normative_Ethics", "Perceptual_Experience", "Personal_Identity", "Philosophical_Progress", "Political_Philosophy", "Proper_Names", "Race", "Science", "Teletransporter", "Time", "Trolley_Problem", "Truth", "Vagueness", "Zombies", "Aesthetic_Experience", "Analysis_of_Knowledge", "Arguments_for_Theism", "Belief_or_Credence", "Capital_Punishment", "Chinese_Room", "Concepts", "Consciousness", "Continuum_Hypothesis", "Cosmological_fine_tuning", "Environmental_Ethics", "Extended_Mind", "Foundations_of_Mathematics", "Gender_Categories", "Grounds_of_Intentionality", "Hard_Problem_of_Consciousness", "Human_Genetic_Engineering", "Hume", "Immortality", "Interlevel_Metaphysics", "Justification", "Kant", "Law", "Material_Composition", "Metaontology", "Method_in_History_of_Philosophy", "Method_in_Political_Philosophy", "Mind_Uploading", "Moral_Principles", "Morality", "Normative_Concepts", "Ought_Implies_Can", "Philosophical_Knowledge", "Plato", "Politics", "Possible_Worlds", "Practical_Reason", "Principle_of_Sufficient_Reason", "Properties", "Propositional_Attitudes", "Propositions", "Quantum_Mechanics", "Race_Categories", "Rational_Disagreement", "Response_to_External_World_Skepticism", "Semantic_Content", "Sleeping_Beauty", "Spacetime", "Statue_and_Lump", "Temporal_Ontology", "Theory_of_Reference", "Time_Travel", "True_Contradictions", "Units_of_Selection", "Values_in_Science", "Well_Being", "Wittgenstein")),
+              selected = "Abortion"
+            ),
+            selectInput(
+              inputId = "x",
+              label = "Natinoality",
+              choices = c("EU", "Canada", "USA", "Africa", "Oceania", "Great Britian", "South America", "Asia", "No Answer", "All Nationalities"),
+              selected = "All Nationalities"
+            )
+          ),
+     # Outputs: Display the table
+          mainPanel(
+            tabsnationality
+          )
+        )
+      )
+      )
+    },
+    
+    # Define server
+    server = function(input, output, session) {
+      
+ selectedy1 <- reactive({
+  req(input$y)
+})
+
+selectedy2 <- reactive({
+  strsplit(req(selectedy1()), ";")[[1]]
+})
+
+selectedy <- reactive({
+  gsub('[ ]', '_', selectedy2())
+})
+
+selectedx1 <- reactive({
+  req(input$x)
+})
+
+selectedx <- reactive({
+  strsplit(req(selectedx1()), ";")[[1]]
+})
+
+
+      output$distPlot <- renderTable({
+        
+        if (selectedx() == "All Nationalities") {
+          kablething <- mainsub %>%
+            pivot_longer(selectedy(), names_to = "Question") %>%
+            count(Question, value) %>%
+            group_by(Question) %>%
+            filter(value != "NA") %>%
+            mutate(pct = percent(n / sum(n)),
+                   Question = str_replace_all(Question, "_", " ")) %>%
+             arrange(desc(n))
+          
+          return(kablething)
+        } else if (selectedx() != "All Nationalities") {
+          kablething <- mainsub %>%
+            filter(Nationality == selectedx()) %>%
+            pivot_longer(selectedy(), names_to = "Question") %>%
+            count(Question, value) %>%
+            group_by(Question) %>%
+            filter(value != "NA") %>%
+            mutate(pct = percent(n / sum(n)),
+                   Question = str_replace_all(Question, "_", " ")) %>%
+             arrange(desc(n))
+          
+          return(kablething)
+}
+      })
+      
+           output$bar <- renderPlot({
+      
+             if (selectedx() == "All Nationalities") {
+          bardata <- mainsub %>%
+            pivot_longer(selectedy(), names_to = "Question") %>%
+            count(Question, value) %>%
+            group_by(Question) %>%
+            filter(value != "NA") %>%
+            mutate(n = n)
+
+          plotthing <- ggplot(bardata, aes(y= reorder(value, n), x = n)) +
+      geom_bar(fill = "black", stat = 'identity') +
+      theme_bw(base_size = bsize) +
+      geom_text(stat='identity', aes(label = n), hjust = -.2, size = sz) +
+            xlab("Number of Responses") +
+            ylab("Answer") +
+      xlim(0,1400)
+          
+          return(plotthing)
+          
+          
+          
+        } else if (selectedx() != "All Nationalities") {
+          bardata <- mainsub %>%
+            filter(Nationality == selectedx()) %>%
+            pivot_longer(selectedy(), names_to = "Question") %>%
+            count(Question, value) %>%
+            group_by(Question) %>%
+            filter(value != "NA") %>%
+            mutate(n = n)
+
+          
+          plotthing <- ggplot(bardata, aes(y= reorder(value, n), x = n)) +
+      geom_bar(fill = "black", stat = 'identity') +
+      theme_bw(base_size = bsize) +
+      geom_text(stat='identity', aes(label = n), hjust = -.2, size = sz) +
+            xlab("Number of Responses") +
+            ylab("Answer") +
+      xlim(0,1400)
+          
+          return(plotthing)
+        }
+
+          
+        })
+      
+      output$pie <- renderPlot({
+         
+        
+      
+             if (selectedx() == "All Nationalities") {
+          bardata <- mainsub %>%
+            pivot_longer(selectedy(), names_to = "Question") %>%
+            count(Question, value) %>%
+            group_by(Question) %>%
+            filter(value != "NA") %>%
+            mutate(n = n,
+                   pct = (n / sum(n))) %>%
+            arrange(pct, value) %>%
+            mutate(pos = cumsum(pct)- 0.5*pct,
+                   value = factor(value, levels=value[order(-(pct))], ordered=TRUE)) %>%
+            ungroup() %>%
+  mutate(label = scales::percent(pct))
+
+          plotthing <-  ggplot(bardata, aes(x="", y=pct, fill=value))+
+      geom_bar(width = 1, stat = "identity") +
+      coord_polar(theta = "y", start=0) +
+   theme_void() +
+      labs(fill = "Answer") +
+            theme(legend.title = element_text(size = bsize),
+                  legend.key.size = unit(1, "cm"),
+                  legend.text = element_text(size=14)) +
+   geom_label_repel(aes(y = pos, label = label),
+                   size = sz, nudge_x = 1, show.legend = FALSE) +
+   scale_fill_brewer(palette="Set3")
+          
+          return(plotthing)
+          
+        } else if (selectedx() != "All Nationalities") {
+          bardata <- mainsub %>%
+            filter(Nationality == selectedx()) %>%
+            pivot_longer(selectedy(), names_to = "Question") %>%
+            count(Question, value) %>%
+            group_by(Question) %>%
+            filter(value != "NA") %>%
+            mutate(n = n,
+                   pct = (n / sum(n))) %>%
+            arrange(pct, value) %>%
+            mutate(pos = cumsum(pct)- 0.5*pct,
+                   value = factor(value, levels=value[order(-(pct))], ordered=TRUE)) %>%
+            ungroup() %>%
+  mutate(label = scales::percent(pct))
+
+          plotthing <-  ggplot(bardata, aes(x="", y=pct, fill=value))+
+      geom_bar(width = 1, stat = "identity") +
+      coord_polar(theta = "y", start=0) +
+   theme_void() +
+      labs(fill = "Answer") +
+            theme(legend.title = element_text(size = bsize),
+                  legend.key.size = unit(1, "cm"),
+                  legend.text = element_text(size=14)) +
+   geom_label_repel(aes(y = pos, label = label),
+                   size = sz, nudge_x = 1, show.legend = FALSE) +
+   scale_fill_brewer(palette="Set3")
+          
+          return(plotthing)
+        }
+        
+      }) 
+      
+    
+
+    } 
+  )
+}
+
+
+
+brochureApp(
+  req_handlers = list(
+    log_where
+  ),
+  pageDemo(),
+  pageAbout(),
+  pageAge(),
+  pageTradition(),
+  pageAOS(),
+  pagePhil(),
+  pageNat(),
+  page(
+    href = "/healthcheck",
+    
+    ui =  nav_links,
+    
+    req_handlers = list(
+      ~ shiny::httpResponse( 200, content = "OK")
+    )
+    
+  )
+)
+```
+Main app setup^
+
+
+      
+      
+      
+      
+      
+
+
+
+

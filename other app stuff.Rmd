@@ -1,0 +1,2468 @@
+---
+title: "Data manipulations and Graphs, No longer Needed"
+output: https://github.com/ShanklesJA/PhilonPhil.git
+date: "2024-01-24"
+---
+```{r}
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(tidyverse)
+library(scales)
+library(ggrepel)
+library(googlesheets4)
+library(googledrive)
+library(shinydashboard)
+library(readr)
+library(here)
+
+pq <- philosophy_department
+```
+
+
+```{r}
+
+    ggplot(data = pq, aes(x = YOB, fill = Gender)) +
+      geom_histogram(binwidth = 5.5) +
+    theme_bw(base_size = bsize) +
+  ylab("Count") +
+  xlab("Year of Birth") +
+  ggtitle("Breakdown of Year born and Gender")
+  
+
+  output$thingnat <- renderPlot({
+    
+    ggplot(data = mainsub, aes( y= fct_rev(fct_infreq(Nationality)))) +
+      geom_bar( fill = "darkgreen") +
+      theme_bw(base_size = bsize) +
+      ylab("Nationality") +
+      xlab("Respondents") +
+      ggtitle("Respondent Nationalities") +
+      geom_text(stat='count', aes(label = ..count..), hjust = -.2, size = 4) +
+      xlim(0,1000)
+    
+  })
+
+  output$aoscpie <- renderPlot({
+    
+
+
+ ggplot(plotmain, aes(x="", y=perc, fill=aoscategory))+
+      geom_bar(width = 1, stat = "identity") +
+      coord_polar("y", start=0) +
+   theme_void(base_size = bsize) +
+      labs(title = "Sample Categories of Specialization", fill = "Category of Specialization") +
+      theme(legend.title = element_text(size = bsize),
+                  legend.key.size = unit(1, "cm"),
+                  legend.text = element_text(size=14)) +
+   geom_label_repel(aes(y = ypos, label = labels),
+                   size = sz, nudge_x = 1, show.legend = FALSE) +
+   scale_fill_brewer(palette="Set3")
+  })    
+        
+  
+  
+    output$phil <- renderPlot({
+    
+      ggplot(data = mainsub, aes( y= fct_rev(fct_infreq(Philosopherover20)))) +
+      geom_bar(fill = "purple") +
+      theme_bw(base_size = bsize) +
+      ylab("Philosopher") +
+      xlab("Count") +
+      ggtitle("Philosopher Alignment") +
+      geom_text(stat='count', aes(label = ..count..), hjust = -.2, size = sz) +
+      xlim(0,600)
+    })
+
+
+```
+
+
+
+
+```{r}
+
+ggplot(pq2, aes(x="", y=perc, fill=demo))+
+      geom_bar(width = 1, stat = "identity") +
+      coord_polar("y", start=0) +
+   theme_void(base_size = bsize) +
+      labs(title = "Survey Demographics", fill = "Demographic") +
+      theme(legend.title = element_text(size = bsize),
+                  legend.key.size = unit(1, "cm"),
+                  legend.text = element_text(size=14)) +
+   geom_label_repel(aes(y = ypos, label = labels),
+                   size = sz, nudge_x = 1, show.legend = FALSE) +
+   scale_fill_brewer(palette="Set3")
+
+      
+      
+ggplot(data = pq, aes(x = ap)) +
+  geom_bar(fill = "darkgreen") +
+  theme_bw(base_size = bsize) +
+  ylab("Count") +
+  xlab("Answer") +
+  ggtitle("A priori Knowledge?") +
+  scale_y_continuous(breaks = seq(0, 10, 1))
+
+ggplot(data = pq, aes(x = `Aesthetic Value?`)) +
+  geom_bar(fill = "purple") +
+  theme_bw(base_size = bsize) +
+  ylab("Count") +
+  xlab("Answer") +
+  ggtitle("Aesthetic Value?") +
+  scale_y_continuous(breaks = seq(0, 10, 1))
+
+ggplot(data = pq, aes(x = `External World?`)) +
+  geom_bar(fill = "gray") +
+  theme_bw(base_size = bsize) +
+  ylab("Count") +
+  xlab("Answer") +
+  ggtitle("External World?") +
+  scale_y_continuous(breaks = seq(0, 10, 1))
+
+ggplot(data = pq, aes(x = `Free Will?`)) +
+  geom_bar(fill = "black") +
+  theme_bw(base_size = bsize) +
+  ylab("Count") +
+  xlab("Answer") +
+  ggtitle("Free Will?") +
+  scale_y_continuous(breaks = seq(0, 10, 1))
+
+ggplot(data = pq, aes(x = `God?`)) +
+  geom_bar(fill = "red") +
+  theme_bw(base_size = bsize) +
+  ylab("Count") +
+  xlab("Answer") +
+  ggtitle("God?") +
+  scale_y_continuous(breaks = seq(0, 10, 1))
+
+ggplot(data = pq, aes(x = `Epistemic Justification?`)) +
+  geom_bar(fill = "aquamarine3") +
+  theme_bw(base_size = bsize) +
+  ylab("Count") +
+  xlab("Answer") +
+  ggtitle("Epistemic Justification?") +
+  scale_y_continuous(breaks = seq(0, 10, 1))
+
+ggplot(data = pq, aes(x = `Knowledge?`)) +
+  geom_bar(fill = "orange2") +
+  theme_bw(base_size = bsize) +
+  ylab("Count") +
+  xlab("Answer") +
+  ggtitle("Knowledge?") +
+  scale_y_continuous(breaks = seq(0, 10, 1))
+
+ggplot(data = pq, aes(x = `Meta-Ethics?`)) +
+  geom_bar(fill = "rosybrown") +
+  theme_bw(base_size = bsize) +
+  ylab("Count") +
+  xlab("Answer") +
+  ggtitle("Meta-Ethics?") +
+  scale_y_continuous(breaks = seq(0, 10, 1))
+
+ggplot(data = pq, aes(x = `Mind?`)) +
+  geom_bar(fill = "brown") +
+  theme_bw(base_size = bsize) +
+  ylab("Count") +
+  xlab("Answer") +
+  ggtitle("Mind?") +
+  scale_y_continuous(breaks = seq(0, 10, 1))
+
+ggplot(data = pq, aes(x = `Moral Judgement?`)) +
+  geom_bar(fill = "turquoise4") +
+  theme_bw(base_size = bsize) +
+  ylab("Count") +
+  xlab("Answer") +
+  ggtitle("Moral Judgement?") +
+  scale_y_continuous(breaks = seq(0, 10, 1))
+
+ggplot(data = pq, aes(x = `Normative Ethics?`)) +
+  geom_bar(fill = "steelblue4") +
+  theme_bw(base_size = bsize) +
+  ylab("Count") +
+  xlab("Answer") +
+  ggtitle("Normative Ethics?") +
+  scale_y_continuous(breaks = seq(0, 10, 1))
+
+ggplot(data = pq, aes(x = `Personal Identity?`)) +
+  geom_bar(fill = "springgreen3") +
+  theme_bw(base_size = bsize) +
+  ylab("Count") +
+  xlab("Answer") +
+  ggtitle("Personal Identity?") +
+  scale_y_continuous(breaks = seq(0, 10, 1))
+
+ggplot(data = pq, aes(x = `Politics?`)) +
+  geom_bar(fill = "slategray4") +
+  theme_bw(base_size = bsize) +
+  ylab("Count") +
+  xlab("Answer") +
+  ggtitle("Politics?") +
+  scale_y_continuous(breaks = seq(0, 10, 1)) +
+  theme(axis.text.x = element_text(angle = -10, vjust = -.2))
+
+labels <- c("Communitarian", )
+ggplot(data = pq, aes(x = `Politics?`)) +
+  geom_bar(fill = "slategray4") +
+  theme_bw(base_size = bsize) +
+  ylab("Count") +
+  xlab("Answer") +
+  ggtitle("Politics?") +
+  scale_y_continuous(breaks = seq(0, 10, 1)) +
+  theme(axis.text.x = element_text(angle = -10, vjust = -.2))
+
+ggplot(data = pq, aes(x = `Science?`)) +
+  geom_bar(fill = "coral3") +
+  theme_bw(base_size = bsize) +
+  ylab("Count") +
+  xlab("Answer") +
+  ggtitle("Science?") +
+  scale_y_continuous(breaks = seq(0, 10, 1))
+
+ggplot(data = pq, aes(x = `Teletransporter?`)) +
+  geom_bar(fill = "black") +
+  theme_bw(base_size = bsize) +
+  ylab("Count") +
+  xlab("Answer") +
+  ggtitle("Teletransporter?") +
+  scale_y_continuous(breaks = seq(0, 10, 1))
+
+ggplot(data = pq, aes(x = `Trolley Problem?`)) +
+  geom_bar(fill = "chocolate") +
+  theme_bw(base_size = bsize) +
+  ylab("Count") +
+  xlab("Answer") +
+  ggtitle("Trolley Problem?") +
+  scale_y_continuous(breaks = seq(0, 10, 1))
+
+
+
+
+
+
+
+```
+
+
+
+
+
+
+```{r}
+
+output$age_gender <- renderPlot({
+    ggplot(data = mainsub, aes(x = YOB, fill = Gender)) +
+      geom_histogram(binwidth = 5.5) +
+    theme_bw(base_size = bsize) +
+  ylab("Count") +
+  xlab("Year of Birth") +
+  ggtitle("Breakdown of Year born and Gender")
+  })
+
+  output$thingnat <- renderPlot({
+    
+    ggplot(data = mainsub, aes( y= fct_rev(fct_infreq(Nationality)))) +
+      geom_bar( fill = "darkgreen") +
+      theme_bw(base_size = bsize) +
+      ylab("Nationality") +
+      xlab("Respondents") +
+      ggtitle("Respondent Nationalities") +
+      geom_text(stat='count', aes(label = ..count..), hjust = -.2, size = 4) +
+      xlim(0,1000)
+    
+  })
+
+  
+    
+
+
+ ggplot(pq2, aes(x="", y=perc, fill=demo))+
+      geom_bar(width = 1, stat = "identity") +
+      coord_polar("y", start=0) +
+   theme_void(base_size = bsize) +
+      labs(title = "Philosophy Department Demographics", fill = "Demographic") +
+      theme(legend.title = element_text(size = bsize),
+                  legend.key.size = unit(1, "cm"),
+                  legend.text = element_text(size=14)) +
+   geom_label_repel(aes(y = ypos, label = labels),
+                   size = sz, nudge_x = 1, show.legend = FALSE) +
+   scale_fill_brewer(palette="Set3")
+   
+        
+  
+  
+
+    
+      ggplot(data = mainsub, aes( y= fct_rev(fct_infreq(Philosopherover20)))) +
+      geom_bar(fill = "purple") +
+      theme_bw(base_size = bsize) +
+      ylab("Philosopher") +
+      xlab("Count") +
+      ggtitle("Philosopher Alignment") +
+      geom_text(stat='count', aes(label = ..count..), hjust = -.2, size = sz) +
+      xlim(0,600)
+ 
+
+
+```
+
+```{r}
+#other things that were attempted
+main <- read_sheet(sheet = 1, "https://docs.google.com/spreadsheets/d/1mj_xHOWpUyKLIT_fJf2-iXRSYcWP7BfUqn77YooPlic/edit#gid=1536770875")
+
+
+
+options(gargle_oauth_email = "jacobashankles.com")
+
+drive_auth <- function(email = gargle::gargle_oauth_email(),
+                       path = NULL,
+                       scopes = "https://www.googleapis.com/auth/drive",
+                       cache = gargle::gargle_oauth_cache(),
+                       use_oob = gargle::gargle_oob_default(),
+                       token = NULL) { ... }
+
+
+
+
+
+
+
+drive_auth_configure()
+gs4_auth( email = "jacobashankles@gmail.com")
+
+gs4_auth(cache = ".secrets", email = "jacobashankles@gmail.com")
+options(
+  # whenever there is one account token found, use the cached token
+  gargle_oauth_email = TRUE,
+  # specify auth tokens should be stored in a hidden directory ".secrets"
+  gargle_oauth_cache = "C:/Users/shank/OneDrive/Summer Research current/Summer Research Project/Summer Research Project/.secrets"
+)
+
+
+##drive_auth(path = ".secrets/client_secret.json")
+##gs4_auth(path = ".secrets/client_secret.json"))
+```
+
+
+
+```{r}
+plotmain <- mainsub %>% 
+  group_by(aoscategory) %>% 
+  count() %>% 
+  ungroup() %>% 
+  mutate_at('aoscategory', ~replace_na(.,"No Answer")) %>%
+  mutate(perc = n / sum(n)) %>% 
+  arrange(perc) %>%
+  mutate(ypos = cumsum(perc)- 0.5*perc,
+         aoscategory = factor(aoscategory, levels=aoscategory[order(-(perc))], ordered=TRUE))
+
+
+plotmain$perc <- as.numeric(plotmain$perc)
+
+plotmain <- plotmain %>%
+  mutate(labels = percent(perc),
+         labels = factor(labels, levels=labels[order(-(perc))], ordered=TRUE))
+
+plotmain$labels <- as.character(plotmain$labels)
+
+plotmain2 <- mainsub %>% 
+  mutate_at('aoscategory', ~replace_na(.,"No Answer"))
+
+ggplot(plotmain, aes(x="", y=perc, fill=aoscategory))+
+      geom_bar(width = 1, stat = "identity") +
+      coord_polar("y", start=0) +
+   theme_void() +
+      labs(title = "Sample Categories of Specialization", fill = "Category of Specialization") +
+   geom_label_repel(aes(y = ypos, label = labels),
+                   size = 2.5, nudge_x = 1, show.legend = FALSE) +
+   scale_fill_brewer(palette="Set3")
+
+```
+
+
+
+```{r} 
+##Graph works in progress
+
+#Region of Affiliaiton
+ ggplot(data = main, aes( y= fct_rev(fct_infreq(Nationality)))) +
+      geom_bar( fill = "darkgreen") +
+      theme_bw() +
+      ylab("Nationality") +
+      xlab("Respondents") +
+      ggtitle("Respondent Nationalities") +
+      geom_text(stat='count', aes(label = ..count..), hjust = -.4, size = 2.8) +
+      xlim(0,950)
+
+
+ggplot(data = main, aes( x= fct_rev(fct_infreq(Tradition)))) +
+      geom_bar( fill = "red") +
+      theme_bw() +
+      ylab("Respondents") +
+      xlab("Philosophical Tradition") +
+      ggtitle("Respondent Philosophical Traditions") +
+      geom_text(stat='count', aes(label = ..count..), vjust = -.4, size = 6) +
+      ylim(0,1600)
+
+
+ggplot(data = main, aes( y= fct_rev(fct_infreq(aoscategory)))) +
+      geom_bar(fill = "blue") +
+      theme_bw(base_size = 16) +
+      ylab("Specialization") +
+      xlab("Count") +
+      ggtitle("Area of Specialization") +
+      geom_text(stat='count', aes(label = ..count..), hjust = -.2, size = 4) +
+      xlim(0,1150)
+
+
+
+
+ggplot(data = main, aes(x = YOB, fill = Gender)) +
+      geom_histogram(binwidth = 5.5) +
+  ylab("Count") +
+  xlab("Year of Birth") +
+  ggtitle("Breakdown of Year born and Gender")
+
+
+
+ggplot(plotmain, aes(x="", y=perc, fill=aoscategory))+
+      geom_bar(width = 1, stat = "identity") +
+      coord_polar("y", start=0) +
+   theme_void() +
+      labs(title = "Sample Categories of Specialization", fill = "Category of Specialization") +
+   geom_label_repel(aes(y = ypos, label = labels),
+                   size = 2.5, nudge_x = 1, show.legend = FALSE) +
+   scale_fill_brewer(palette="Set3")
+
+
+ggplot(data = main, aes( y= fct_rev(fct_infreq(Philosopher)))) +
+      geom_bar(fill = "purple") +
+      theme_bw() +
+      ylab("Specialization") +
+      xlab("Count") +
+      ggtitle("Area of Specialization") +
+      geom_text(stat='count', aes(label = ..count..), hjust = -.4, size = 2.8) +
+      xlim(0,600)
+
+
+
+
+
+
+```
+Some graph stuff ^
+
+
+
+
+```{r}
+##work in progess template for single app
+pageAge <- function() {
+  page(
+    href = "/Age",
+    ui = function(request) {
+fluidPage(theme = shinytheme("darkly"),
+      tagList(
+        h1("Age"),
+        h5(nav_links),
+        sidebarLayout(
+          # Inputs: Select variables to plot
+          sidebarPanel(
+            selectInput(
+              inputId = "y",
+              label = "Question",
+              choices = gsub('[_]',' ', c("Abortion", "A_Priori", "Abstract_Objects", "Normativity_or_Metaphysically", "Aesthetic_Value", "Aim_of_Philosophy", "Analytic_synthetic_Distinction", "Eating_Animals_Animal_Products", "Epistemic_Justification", "Experience_Machine", "External_World", "Footbridge", "Free_Will", "Gender_Q", "God", "Knowledge_Claims", "Knowledge", "Laws_of_Nature", "Logic", "Meaning_of_Life", "Mental_Content", "Meta_Ethics", "Metaphilosophy", "Mind", "Moral_Judgement", "Moral_Motivation", "Newcombs_Problem", "Normative_Ethics", "Perceptual_Experience", "Personal_Identity", "Philosophical_Progress", "Political_Philosophy", "Proper_Names", "Race", "Science", "Teletransporter", "Time", "Trolley_Problem", "Truth", "Vagueness", "Zombies", "Aesthetic_Experience", "Analysis_of_Knowledge", "Arguments_for_Theism", "Belief_or_Credence", "Capital_Punishment", "Chinese_Room", "Concepts", "Consciousness", "Continuum_Hypothesis", "Cosmological_fine_tuning", "Environmental_Ethics", "Extended_Mind", "Foundations_of_Mathematics", "Gender_Categories", "Grounds_of_Intentionality", "Hard_Problem_of_Consciousness", "Human_Genetic_Engineering", "Hume", "Immortality", "Interlevel_Metaphysics", "Justification", "Kant", "Law", "Material_Composition", "Metaontology", "Method_in_History_of_Philosophy", "Method_in_Political_Philosophy", "Mind_Uploading", "Moral_Principles", "Morality", "Normative_Concepts", "Ought_Implies_Can", "Philosophical_Knowledge", "Plato", "Politics", "Possible_Worlds", "Practical_Reason", "Principle_of_Sufficient_Reason", "Properties", "Propositional_Attitudes", "Propositions", "Quantum_Mechanics", "Race_Categories", "Rational_Disagreement", "Response_to_External_World_Skepticism", "Semantic_Content", "Sleeping_Beauty", "Spacetime", "Statue_and_Lump", "Temporal_Ontology", "Theory_of_Reference", "Time_Travel", "True_Contradictions", "Units_of_Selection", "Values_in_Science", "Well_Being", "Wittgenstein")),
+              selected = "Abortion"
+            ),
+            selectInput(
+              inputId = "x",
+              label = "Age",
+              choices = c("Under 40", "40 to 60", "Older Than 60", "All Ages"),
+              selected = "All Ages"
+            )
+          ),
+     # Outputs: Display the table
+          mainPanel(
+            tabsage,
+          )
+        )
+      )
+)
+    },
+    
+    # Define server
+    server = function(input, output, session) {
+
+##  barcode_first<-reactive({strsplit(req(barcode_first1()),";")[[1]]})
+  
+selectedy1 <- reactive({
+  req(input$y)
+})
+
+selectedy2 <- reactive({
+  strsplit(req(selectedy1()), ";")[[1]]
+})
+
+selectedy <- reactive({
+  gsub('[ ]', '_', selectedy2())
+})
+
+selectedx1 <- reactive({
+  req(input$x)
+})
+
+selectedx <- reactive({
+  strsplit(req(selectedx1()), ";")[[1]]
+})
+
+
+        
+      
+      output$distPlot <- renderTable({
+        
+        
+        
+        if (selectedx() == "All Ages") {
+          kablething <- mainsub %>%
+            pivot_longer(selectedy(), names_to = "Question") %>%
+              count(Question, value) %>%
+            group_by(Question) %>%
+            filter(value != "NA") %>%
+            mutate(pct = percent(n / sum(n)),
+                   Question = str_replace_all(Question, "_", " ")) %>%
+             arrange(desc(n))
+
+          return(kablething)
+          
+        } else if (selectedx() != "All Ages") {
+          kablething <- mainsub %>%
+            filter(Age == selectedx()) %>%
+            pivot_longer(selectedy(), names_to = "Question") %>%
+            count(Question, value) %>%
+            group_by(Question) %>%
+            filter(value != "NA") %>%
+            mutate(pct = percent(n / sum(n)),
+                   Question = str_replace_all(Question, "_", " ")) %>%
+             arrange(desc(n))
+
+          return(kablething)
+        }
+      })
+           output$bar <- renderPlot({
+             
+        
+      
+             if (selectedx() == "All Ages") {
+          bardata <- mainsub %>%
+            pivot_longer(selectedy(), names_to = "Question") %>%
+            count(Question, value) %>%
+            group_by(Question) %>%
+            filter(value != "NA") %>%
+            mutate(n = n)
+
+          plotthing <- ggplot(bardata, aes(y= reorder(value, n), x = n)) +
+      geom_bar(fill = "black", stat = 'identity') +
+      theme_bw() +
+      geom_text(stat='identity', aes(label = n), hjust = -.4, size = 2.8) +
+            xlab("Number of Responses") +
+            ylab("Answer") +
+      xlim(0,1400)
+          
+          return(plotthing)
+          
+        } else if (selectedx() != "All Ages") {
+          bardata <- mainsub %>%
+            filter(Age == selectedx()) %>%
+            pivot_longer(selectedy(), names_to = "Question") %>%
+            count(Question, value) %>%
+            group_by(Question) %>%
+            filter(value != "NA") %>%
+            mutate(n = n)
+
+          
+          
+          
+          plotthing <- ggplot(bardata, aes(y= reorder(value, n), x = n)) +
+      geom_bar(fill = "black", stat = 'identity') +
+      theme_bw() +
+      geom_text(stat='identity', aes(label = n), hjust = -.4, size = 2.8) +
+            xlab("Number of Responses") +
+            ylab("Answer") +
+      xlim(0,1400)
+          
+          
+          return(plotthing)
+        }
+
+          
+        })
+      
+    
+      output$pie <- renderPlot({
+         
+        
+      
+             if (selectedx() == "All Ages") {
+          bardata <- mainsub %>%
+            pivot_longer(selectedy(), names_to = "Question") %>%
+            count(Question, value) %>%
+            group_by(Question) %>%
+            filter(value != "NA") %>%
+            mutate(n = n,
+                   pct = (n / sum(n))) %>%
+            arrange(pct, value) %>%
+            mutate(pos = cumsum(pct)- 0.5*pct,
+                   value = factor(value, levels=value[order(-(pct))], ordered=TRUE)) %>%
+            ungroup() %>%
+  mutate(label = scales::percent(pct))
+
+          plotthing <-  ggplot(bardata, aes(x="", y=pct, fill=value))+
+      geom_bar(width = 1, stat = "identity") +
+      coord_polar(theta = "y", start=0) +
+   theme_void() +
+      labs(title = "Pie Graph", fill = "Answer") +
+   geom_label_repel(aes(y = pos, label = label),
+                   size = 2.5, nudge_x = 1, show.legend = FALSE) +
+   scale_fill_brewer(palette="Set3")
+          
+          return(plotthing)
+          
+        } else if (selectedx() != "All Ages") {
+          bardata <- mainsub %>%
+            filter(Age == selectedx()) %>%
+            pivot_longer(selectedy(), names_to = "Question") %>%
+            count(Question, value) %>%
+            group_by(Question) %>%
+            filter(value != "NA") %>%
+            mutate(n = n,
+                   pct = (n / sum(n))) %>%
+            arrange(pct, value) %>%
+            mutate(pos = cumsum(pct)- 0.5*pct,
+                   value = factor(value, levels=value[order(-(pct))], ordered=TRUE)) %>%
+            ungroup() %>%
+  mutate(label = scales::percent(pct))
+
+          plotthing <-  ggplot(bardata, aes(x="", y=pct, fill=value))+
+      geom_bar(width = 1, stat = "identity") +
+      coord_polar(theta = "y", start=0) +
+   theme_void() +
+      labs(fill = "Answer") +
+   geom_label_repel(aes(y = pos, label = label),
+                   size = 2.5, nudge_x = 1, show.legend = FALSE) +
+   scale_fill_brewer(palette="Set3")
+          
+          return(plotthing)
+        }
+        
+      }) 
+    } 
+  )
+}
+
+
+
+
+
+```
+single page template ^
+
+
+
+
+```{r}
+##Old version of app setup
+log_where <- function(req){
+  cli::cat_rule(
+    sprintf(
+      "%s - %s", 
+      Sys.time(), 
+      req$PATH_INFO
+    )
+  )
+  req
+}
+
+tabsthing<- tabsetPanel(
+    tabPanel("Age and Gender",  plotOutput("age_gender")),
+    tabPanel("Nationality", plotOutput("nat")),
+    tabPanel("Category of Specialization",plotOutput("aoscpie"))
+  )
+
+
+  
+
+
+nav_links <- tags$ul(
+  tags$li(
+    tags$a(href = "/", "Demographics"), 
+  ),
+  tags$li(
+    tags$a(href = "/Age", "Age"), 
+  ),
+  tags$li(
+    tags$a(href = "/Tradition", "Tradition"), 
+  ),
+  tags$li(
+    tags$a(href = "/AOS", "Area of Specialization"),
+  ),
+  tags$li(
+    tags$a(href = "/Philosopher", "Philosopher Alignment"),
+    
+    tags$li(
+      tags$a(href = "/Nationality", "Nationality"),
+    )
+)
+)
+
+
+
+pageDemo <- function() {
+page(
+  href = "/",
+    ui = fluidPage(
+      theme = shinytheme("darkly"),
+      h1("Demographics Infromation"), 
+      h5(nav_links),
+      tabsthing,
+      plotOutput("plot")
+    ),
+    server = function(input, output, session){
+  
+output$age_gender <- renderPlot({
+    ggplot(data = main, aes(x = YOB, fill = Gender)) +
+      geom_histogram(binwidth = 5.5) +
+  ylab("Count") +
+  xlab("Year of Birth") +
+  ggtitle("Breakdown of Year born and Gender")
+  })
+
+  output$nat <- renderPlot({
+    
+    ggplot(data = main, aes( y= fct_rev(fct_infreq(Nationality)))) +
+      geom_bar( fill = "darkgreen") +
+      theme_bw() +
+      ylab("Nationality") +
+      xlab("Respondents") +
+      ggtitle("Respondent Nationalities") +
+      geom_text(stat='count', aes(label = ..count..), hjust = -.4, size = 2.8) +
+      xlim(0,950)
+    
+  })
+
+  output$aoscpie <- renderPlot({
+    
+
+
+ ggplot(plotmain, aes(x="", y=perc, fill=aoscategory))+
+      geom_bar(width = 1, stat = "identity") +
+      coord_polar("y", start=0) +
+   theme_void() +
+      labs(title = "Sample Categories of Specialization", fill = "Category of Specialization") +
+   geom_label_repel(aes(y = ypos, label = labels),
+                   size = 2.5, nudge_x = 1, show.legend = FALSE) +
+   scale_fill_brewer(palette="Set3")
+  })    
+        
+      }
+)
+      }
+
+
+pageAge <- function() {
+  page(
+    href = "/Age",
+    ui = function(request) {
+      fluidPage(theme = shinytheme("darkly"),
+      tagList(
+        h1("Age"),
+        h5(nav_links),
+        sidebarLayout(
+          # Inputs: Select variables to plot
+          sidebarPanel(
+            selectInput(
+              inputId = "y",
+              label = "Question",
+              choices = gsub('[_]',' ', c("Abortion", "A_Priori", "Abstract_Objects", "Normativity_or_Metaphysically", "Aesthetic_Value", "Aim_of_Philosophy", "Analytic_synthetic_Distinction", "Eating_Animals_Animal_Products", "Epistemic_Justification", "Experience_Machine", "External_World", "Footbridge", "Free_Will", "Gender_Q", "God", "Knowledge_Claims", "Knowledge", "Laws_of_Nature", "Logic", "Meaning_of_Life", "Mental_Content", "Meta_Ethics", "Metaphilosophy", "Mind", "Moral_Judgement", "Moral_Motivation", "Newcombs_Problem", "Normative_Ethics", "Perceptual_Experience", "Personal_Identity", "Philosophical_Progress", "Political_Philosophy", "Proper_Names", "Race", "Science", "Teletransporter", "Time", "Trolley_Problem", "Truth", "Vagueness", "Zombies", "Aesthetic_Experience", "Analysis_of_Knowledge", "Arguments_for_Theism", "Belief_or_Credence", "Capital_Punishment", "Chinese_Room", "Concepts", "Consciousness", "Continuum_Hypothesis", "Cosmological_fine_tuning", "Environmental_Ethics", "Extended_Mind", "Foundations_of_Mathematics", "Gender_Categories", "Grounds_of_Intentionality", "Hard_Problem_of_Consciousness", "Human_Genetic_Engineering", "Hume", "Immortality", "Interlevel_Metaphysics", "Justification", "Kant", "Law", "Material_Composition", "Metaontology", "Method_in_History_of_Philosophy", "Method_in_Political_Philosophy", "Mind_Uploading", "Moral_Principles", "Morality", "Normative_Concepts", "Ought_Implies_Can", "Philosophical_Knowledge", "Plato", "Politics", "Possible_Worlds", "Practical_Reason", "Principle_of_Sufficient_Reason", "Properties", "Propositional_Attitudes", "Propositions", "Quantum_Mechanics", "Race_Categories", "Rational_Disagreement", "Response_to_External_World_Skepticism", "Semantic_Content", "Sleeping_Beauty", "Spacetime", "Statue_and_Lump", "Temporal_Ontology", "Theory_of_Reference", "Time_Travel", "True_Contradictions", "Units_of_Selection", "Values_in_Science", "Well_Being", "Wittgenstein")),
+              selected = "Abortion"
+            ),
+            selectInput(
+              inputId = "x",
+              label = "Age",
+              choices = c("Under 40", "40 to 60", "Older Than 60", "All Ages"),
+              selected = "All Ages"
+            )
+          ),
+     # Outputs: Display the table
+          mainPanel(
+            tableOutput(outputId = "distPlot")
+          )
+        )
+      )
+      )
+    },
+    
+    # Define server
+    server = function(input, output, session) {
+      output$distPlot <- renderTable({
+        selected <- input$y
+        selectedy <- gsub('[ ]', '_', selected)
+        
+        if (input$x == "All Ages") {
+          kablething <- mainsub %>%
+            pivot_longer(selectedy, names_to = "Question") %>%
+            count(Question, value) %>%
+            group_by(Question) %>%
+            filter(value != "NA") %>%
+            mutate(pct = percent(n / sum(n)),
+                   Question = str_replace_all(Question, "_", " ")) %>%
+             arrange(desc(n))
+          
+          return(kablething)
+        } else if (input$x != "All Ages") {
+          kablething <- mainsub %>%
+            filter(Age == input$x) %>%
+            pivot_longer(selectedy, names_to = "Question") %>%
+            count(Question, value) %>%
+            group_by(Question) %>%
+            filter(value != "NA") %>%
+            mutate(pct = percent(n / sum(n)),
+                   Question = str_replace_all(Question, "_", " ")) %>%
+             arrange(desc(n))
+          
+          return(kablething)
+        }
+      })
+    }
+  )
+}
+
+
+
+pageTradition <- function() {
+  page(
+    href = "/Tradition",
+    ui = function(request) {
+      fluidPage(theme = shinytheme("darkly"),
+      tagList(
+        h1("Tradition"),
+        h5(nav_links),
+        sidebarLayout(
+          # Inputs: Select variables to plot
+          sidebarPanel(
+            selectInput(
+              inputId = "y",
+              label = "Question",
+              choices = gsub('[_]',' ', c("Abortion", "A_Priori", "Abstract_Objects", "Normativity_or_Metaphysically", "Aesthetic_Value", "Aim_of_Philosophy", "Analytic_synthetic_Distinction", "Eating_Animals_Animal_Products", "Epistemic_Justification", "Experience_Machine", "External_World", "Footbridge", "Free_Will", "Gender_Q", "God", "Knowledge_Claims", "Knowledge", "Laws_of_Nature", "Logic", "Meaning_of_Life", "Mental_Content", "Meta_Ethics", "Metaphilosophy", "Mind", "Moral_Judgement", "Moral_Motivation", "Newcombs_Problem", "Normative_Ethics", "Perceptual_Experience", "Personal_Identity", "Philosophical_Progress", "Political_Philosophy", "Proper_Names", "Race", "Science", "Teletransporter", "Time", "Trolley_Problem", "Truth", "Vagueness", "Zombies", "Aesthetic_Experience", "Analysis_of_Knowledge", "Arguments_for_Theism", "Belief_or_Credence", "Capital_Punishment", "Chinese_Room", "Concepts", "Consciousness", "Continuum_Hypothesis", "Cosmological_fine_tuning", "Environmental_Ethics", "Extended_Mind", "Foundations_of_Mathematics", "Gender_Categories", "Grounds_of_Intentionality", "Hard_Problem_of_Consciousness", "Human_Genetic_Engineering", "Hume", "Immortality", "Interlevel_Metaphysics", "Justification", "Kant", "Law", "Material_Composition", "Metaontology", "Method_in_History_of_Philosophy", "Method_in_Political_Philosophy", "Mind_Uploading", "Moral_Principles", "Morality", "Normative_Concepts", "Ought_Implies_Can", "Philosophical_Knowledge", "Plato", "Politics", "Possible_Worlds", "Practical_Reason", "Principle_of_Sufficient_Reason", "Properties", "Propositional_Attitudes", "Propositions", "Quantum_Mechanics", "Race_Categories", "Rational_Disagreement", "Response_to_External_World_Skepticism", "Semantic_Content", "Sleeping_Beauty", "Spacetime", "Statue_and_Lump", "Temporal_Ontology", "Theory_of_Reference", "Time_Travel", "True_Contradictions", "Units_of_Selection", "Values_in_Science", "Well_Being", "Wittgenstein")),
+              selected = "Abortion"
+            ),
+            selectInput(
+              inputId = "x",
+        label = "Tradition",
+        choices = c("All Traditions","Continental", "Analytic", "Other Traditions" ),
+        selected = "All Traditions"
+            )
+          ),
+     # Outputs: Display the table
+          mainPanel(
+            tableOutput(outputId = "distPlot")
+          )
+        )
+      )
+      )
+    },
+    
+    # Define server
+    server <- function(input, output, session) {
+      output$distPlot <- renderTable({
+        selected <- input$y
+        selectedy <- gsub('[ ]', '_', selected)
+
+    if (input$x == "All Traditions") {
+    kablething <- mainsub %>%
+      pivot_longer(selectedy, names_to = "Question") %>%
+      count(Question, value) %>%
+      group_by(Question) %>%
+      filter(value != "NA") %>%
+      mutate(pct = percent(n / sum(n)),
+                   Question = str_replace_all(Question, "_", " ")) %>%
+             arrange(desc(n))
+      
+    return(kablething)
+  }
+      else if(input$x != "All Traditions") {
+    kablething <- mainsub %>%
+      filter(Tradition == input$x) %>%
+      pivot_longer(selectedy, names_to = "Question") %>%
+      count(Question, value) %>%
+      group_by(Question) %>%
+      filter(value != "NA") %>%
+      mutate(pct = percent(n / sum(n)),
+                   Question = str_replace_all(Question, "_", " ")) %>%
+             arrange(desc(n))
+      
+    return(kablething)
+        }
+      })
+    }
+  )
+}
+
+
+
+
+pageAOS <- function() {
+  page(
+    href = "/AOS",
+    ui = function(request) {
+      fluidPage(theme = shinytheme("darkly"),
+      tagList(
+        h1("Area of Specialization"),
+        h5(nav_links),
+        sidebarLayout(
+          # Inputs: Select variables to plot
+          sidebarPanel(
+            selectInput(
+              inputId = "y",
+              label = "Question",
+              choices = gsub('[_]',' ', c("Abortion", "A_Priori", "Abstract_Objects", "Normativity_or_Metaphysically", "Aesthetic_Value", "Aim_of_Philosophy", "Analytic_synthetic_Distinction", "Eating_Animals_Animal_Products", "Epistemic_Justification", "Experience_Machine", "External_World", "Footbridge", "Free_Will", "Gender_Q", "God", "Knowledge_Claims", "Knowledge", "Laws_of_Nature", "Logic", "Meaning_of_Life", "Mental_Content", "Meta_Ethics", "Metaphilosophy", "Mind", "Moral_Judgement", "Moral_Motivation", "Newcombs_Problem", "Normative_Ethics", "Perceptual_Experience", "Personal_Identity", "Philosophical_Progress", "Political_Philosophy", "Proper_Names", "Race", "Science", "Teletransporter", "Time", "Trolley_Problem", "Truth", "Vagueness", "Zombies", "Aesthetic_Experience", "Analysis_of_Knowledge", "Arguments_for_Theism", "Belief_or_Credence", "Capital_Punishment", "Chinese_Room", "Concepts", "Consciousness", "Continuum_Hypothesis", "Cosmological_fine_tuning", "Environmental_Ethics", "Extended_Mind", "Foundations_of_Mathematics", "Gender_Categories", "Grounds_of_Intentionality", "Hard_Problem_of_Consciousness", "Human_Genetic_Engineering", "Hume", "Immortality", "Interlevel_Metaphysics", "Justification", "Kant", "Law", "Material_Composition", "Metaontology", "Method_in_History_of_Philosophy", "Method_in_Political_Philosophy", "Mind_Uploading", "Moral_Principles", "Morality", "Normative_Concepts", "Ought_Implies_Can", "Philosophical_Knowledge", "Plato", "Politics", "Possible_Worlds", "Practical_Reason", "Principle_of_Sufficient_Reason", "Properties", "Propositional_Attitudes", "Propositions", "Quantum_Mechanics", "Race_Categories", "Rational_Disagreement", "Response_to_External_World_Skepticism", "Semantic_Content", "Sleeping_Beauty", "Spacetime", "Statue_and_Lump", "Temporal_Ontology", "Theory_of_Reference", "Time_Travel", "True_Contradictions", "Units_of_Selection", "Values_in_Science", "Well_Being", "Wittgenstein")),
+              selected = "Abortion"
+            ),
+            selectInput(
+              inputId = "x",
+        label = "Category of Specialization",
+        choices = c("Metaphysics and Epistimology", "Science, Logic, and Mathematics", "Value Theory", "History of Western Philosophy", "Philosophical Traditions", "All Areas" ),
+        selected = "All Areas"
+            )
+          ),
+     # Outputs: Display the table
+          mainPanel(
+            tableOutput(outputId = "distPlot")
+          )
+        )
+      )
+      )
+    },
+    
+    # Define server
+    server <- function(input, output, session) {
+      output$distPlot <- renderTable({
+        selected <- input$y
+        selectedy <- gsub('[ ]', '_', selected)
+
+  if (input$x == "All Areas") {
+    kablething <- mainsub %>%
+      pivot_longer(selectedy, names_to = "Question") %>%
+      count(Question, value) %>%
+      group_by(Question) %>%
+      filter(value != "NA") %>%
+      mutate(pct = percent(n / sum(n)),
+                   Question = str_replace_all(Question, "_", " ")) %>%
+             arrange(desc(n))
+      
+    return(kablething)
+  }
+      else if(input$x != "All Areas") {
+    kablething <- mainsub %>%
+      filter(aoscategory == input$x) %>%
+      pivot_longer(selectedy, names_to = "Question") %>%
+      count(Question, value) %>%
+      group_by(Question) %>%
+      filter(value != "NA") %>%
+      mutate(pct = percent(n / sum(n)),
+                   Question = str_replace_all(Question, "_", " ")) %>%
+             arrange(desc(n))
+      
+    return(kablething)
+        }
+      })
+    }
+  )
+}
+
+
+
+
+
+pagePhil <- function() {
+  page(
+    href = "/Philosopher",
+    ui = function(request) {
+      fluidPage(theme = shinytheme("darkly"),
+      tagList(
+        h1("Philosopher Alignment"),
+        h5(nav_links),
+        sidebarLayout(
+          # Inputs: Select variables to plot
+          sidebarPanel(
+            selectInput(
+              inputId = "y",
+              label = "Question",
+              choices = gsub('[_]',' ', c("Abortion", "A_Priori", "Abstract_Objects", "Normativity_or_Metaphysically", "Aesthetic_Value", "Aim_of_Philosophy", "Analytic_synthetic_Distinction", "Eating_Animals_Animal_Products", "Epistemic_Justification", "Experience_Machine", "External_World", "Footbridge", "Free_Will", "Gender_Q", "God", "Knowledge_Claims", "Knowledge", "Laws_of_Nature", "Logic", "Meaning_of_Life", "Mental_Content", "Meta_Ethics", "Metaphilosophy", "Mind", "Moral_Judgement", "Moral_Motivation", "Newcombs_Problem", "Normative_Ethics", "Perceptual_Experience", "Personal_Identity", "Philosophical_Progress", "Political_Philosophy", "Proper_Names", "Race", "Science", "Teletransporter", "Time", "Trolley_Problem", "Truth", "Vagueness", "Zombies", "Aesthetic_Experience", "Analysis_of_Knowledge", "Arguments_for_Theism", "Belief_or_Credence", "Capital_Punishment", "Chinese_Room", "Concepts", "Consciousness", "Continuum_Hypothesis", "Cosmological_fine_tuning", "Environmental_Ethics", "Extended_Mind", "Foundations_of_Mathematics", "Gender_Categories", "Grounds_of_Intentionality", "Hard_Problem_of_Consciousness", "Human_Genetic_Engineering", "Hume", "Immortality", "Interlevel_Metaphysics", "Justification", "Kant", "Law", "Material_Composition", "Metaontology", "Method_in_History_of_Philosophy", "Method_in_Political_Philosophy", "Mind_Uploading", "Moral_Principles", "Morality", "Normative_Concepts", "Ought_Implies_Can", "Philosophical_Knowledge", "Plato", "Politics", "Possible_Worlds", "Practical_Reason", "Principle_of_Sufficient_Reason", "Properties", "Propositional_Attitudes", "Propositions", "Quantum_Mechanics", "Race_Categories", "Rational_Disagreement", "Response_to_External_World_Skepticism", "Semantic_Content", "Sleeping_Beauty", "Spacetime", "Statue_and_Lump", "Temporal_Ontology", "Theory_of_Reference", "Time_Travel", "True_Contradictions", "Units_of_Selection", "Values_in_Science", "Well_Being", "Wittgenstein")),
+              selected = "Abortion"
+            ),
+            selectInput(
+              inputId = "x",
+              label = "Philosopher",
+              choices = c("Anscombe", "Aquinas", "Arendt", "Aristotle", "Augustine", "Austin", "Berkeley", "Carnap", "Davidson", "De Beauvoir", "Descartes", "Dewey", "Foucault", "Frege", "Hegel", "Heidegger", "Hobbes", "Hume", "Husserl", "James", "Kant", "Leibniz", "Lewis", "Locke", "No Answer", "Other", "Parfit", "Plato", "Quine", "Rawls", "Russell", "Socrates", "Wittgenstein", "All Philosophers"),
+              selected = "All Philosophers"
+            )
+          ),
+     # Outputs: Display the table
+          mainPanel(
+            tableOutput(outputId = "distPlot")
+          )
+        )
+      )
+      )
+    },
+    
+    # Define server
+    server = function(input, output, session) {
+      output$distPlot <- renderTable({
+        selected <- input$y
+        selectedy <- gsub('[ ]', '_', selected)
+        
+        if (input$x == "All Philosophers") {
+          kablething <- mainsub %>%
+            pivot_longer(selectedy, names_to = "Question") %>%
+            count(Question, value) %>%
+            group_by(Question) %>%
+            filter(value != "NA") %>%
+            mutate(pct = percent(n / sum(n)),
+                   Question = str_replace_all(Question, "_", " ")) %>%
+             arrange(desc(n))
+          
+          return(kablething)
+        } else if (input$x != "All Philosophers") {
+          kablething <- mainsub %>%
+            filter(Philosopher == input$x) %>%
+            pivot_longer(selectedy, names_to = "Question") %>%
+            count(Question, value) %>%
+            group_by(Question) %>%
+            filter(value != "NA") %>%
+            mutate(pct = percent(n / sum(n)),
+                   Question = str_replace_all(Question, "_", " ")) %>%
+             arrange(desc(n))
+          
+          return(kablething)
+        }
+      })
+    }
+  )
+}
+
+pageNat <- function() {
+  page(
+    href = "/Nationality",
+    ui = function(request) {
+      fluidPage(theme = shinytheme("darkly"),
+      tagList(
+        h1("Nationality"),
+        h5(nav_links),
+        sidebarLayout(
+          # Inputs: Select variables to plot
+          sidebarPanel(
+            selectInput(
+              inputId = "y",
+              label = "Question",
+              choices = gsub('[_]',' ', c("Abortion", "A_Priori", "Abstract_Objects", "Normativity_or_Metaphysically", "Aesthetic_Value", "Aim_of_Philosophy", "Analytic_synthetic_Distinction", "Eating_Animals_Animal_Products", "Epistemic_Justification", "Experience_Machine", "External_World", "Footbridge", "Free_Will", "Gender_Q", "God", "Knowledge_Claims", "Knowledge", "Laws_of_Nature", "Logic", "Meaning_of_Life", "Mental_Content", "Meta_Ethics", "Metaphilosophy", "Mind", "Moral_Judgement", "Moral_Motivation", "Newcombs_Problem", "Normative_Ethics", "Perceptual_Experience", "Personal_Identity", "Philosophical_Progress", "Political_Philosophy", "Proper_Names", "Race", "Science", "Teletransporter", "Time", "Trolley_Problem", "Truth", "Vagueness", "Zombies", "Aesthetic_Experience", "Analysis_of_Knowledge", "Arguments_for_Theism", "Belief_or_Credence", "Capital_Punishment", "Chinese_Room", "Concepts", "Consciousness", "Continuum_Hypothesis", "Cosmological_fine_tuning", "Environmental_Ethics", "Extended_Mind", "Foundations_of_Mathematics", "Gender_Categories", "Grounds_of_Intentionality", "Hard_Problem_of_Consciousness", "Human_Genetic_Engineering", "Hume", "Immortality", "Interlevel_Metaphysics", "Justification", "Kant", "Law", "Material_Composition", "Metaontology", "Method_in_History_of_Philosophy", "Method_in_Political_Philosophy", "Mind_Uploading", "Moral_Principles", "Morality", "Normative_Concepts", "Ought_Implies_Can", "Philosophical_Knowledge", "Plato", "Politics", "Possible_Worlds", "Practical_Reason", "Principle_of_Sufficient_Reason", "Properties", "Propositional_Attitudes", "Propositions", "Quantum_Mechanics", "Race_Categories", "Rational_Disagreement", "Response_to_External_World_Skepticism", "Semantic_Content", "Sleeping_Beauty", "Spacetime", "Statue_and_Lump", "Temporal_Ontology", "Theory_of_Reference", "Time_Travel", "True_Contradictions", "Units_of_Selection", "Values_in_Science", "Well_Being", "Wittgenstein")),
+              selected = "Abortion"
+            ),
+            selectInput(
+              inputId = "x",
+              label = "Natinoality",
+              choices = c("EU", "Canada", "USA", "Africa", "Oceania", "Great Britian", "South America", "Asia", "No Answer", "All Nationalities"),
+              selected = "All Nationalities"
+            )
+          ),
+     # Outputs: Display the table
+          mainPanel(
+            tableOutput(outputId = "distPlot")
+          )
+        )
+      )
+      )
+    },
+    
+    # Define server
+    server = function(input, output, session) {
+      output$distPlot <- renderTable({
+        selected <- input$y
+        selectedy <- gsub('[ ]', '_', selected)
+        
+        if (input$x == "All Nationalities") {
+          kablething <- mainsub %>%
+            pivot_longer(selectedy, names_to = "Question") %>%
+            count(Question, value) %>%
+            group_by(Question) %>%
+            filter(value != "NA") %>%
+            mutate(pct = percent(n / sum(n)),
+                   Question = str_replace_all(Question, "_", " ")) %>%
+             arrange(desc(n))
+          
+          return(kablething)
+        } else if (input$x != "All Nationalities") {
+          kablething <- mainsub %>%
+            filter(Nationality == input$x) %>%
+            pivot_longer(selectedy, names_to = "Question") %>%
+            count(Question, value) %>%
+            group_by(Question) %>%
+            filter(value != "NA") %>%
+            mutate(pct = percent(n / sum(n)),
+                   Question = str_replace_all(Question, "_", " ")) %>%
+             arrange(desc(n))
+          
+          return(kablething)
+        }
+      })
+    }
+  )
+}
+```
+
+
+
+
+
+```{r}
+##New varaible and data frame setup
+thesis <- survey_responses_per_thesis
+demo <- survey_demographics
+bsize <- 16
+sz <- 4.4
+demo <- demo %>%
+  mutate( 
+         Gender = case_when(Gender.male == 2 ~ "Male",
+                                  Gender.female == 2 ~ "Female",
+                                  Gender.other == 2 ~ "Other",
+                            TRUE ~ "Prefer Not to Say"),
+         aos = case_when(AOS.Epistemology == 2 ~ "Epistimology",
+                         AOS.Metaphilosophy == 2 ~ "Metaphilosophy",
+                         AOS.Metaphysics == 2 ~ "Metaphysics",
+                         AOS.Philosophy_of_Action == 2 ~ "Phil. of Action",
+                         AOS.Philosophy_of_Language == 2 ~ "Phil. of Language",
+                         AOS.Philosophy_of_Mind == 2 ~ "Phil. of Mind",
+                         AOS.Philosophy_of_Religion == 2 ~ "Phil. of Religion",
+                         AOS.Aesthetics == 2 ~ "Aesthetics",
+                         AOS.Applied_Ethics == 2 ~ "Applied Ethics",
+                         AOS.MetaDDEthics == 2 ~ "Meta-Ethics",
+                         AOS.Normative_Ethics == 2 ~ "Normative Ethics",
+                         AOS.Philosophy_of_Law == 2 ~ "Phil. of Law",
+                         AOS.Social_and_Political_Philosophy == 2 ~ "Social and Political Phil.",
+                         AOS.Logic_and_Philosophy_of_Logic == 2 ~ "Logic and Phil. of Logic",
+                         AOS.Philosophy_of_Biology == 2 ~ "Phil. of Biology", 
+                         AOS.Philosophy_of_Cognitive_Science == 2 ~ "Phil. of Cognitive Science", 
+                         AOS.Philosophy_of_Computing_and_Information == 2 ~ "Phil. of Comp. and Info.",
+                         AOS.Philosophy_of_Mathematics == 2 ~ "Phil. of Mathematics",
+                         AOS.Philosophy_of_Social_Science == 2 ~ "Phil. of Social Science", 
+                         AOS.Ancient_Greek_and_Roman_Philosophy == 2 ~ "Ancient Greek and Roman Phil.",
+                         AOS.Medieval_and_Renaissance_Philosophy == 2 ~ "Medieval and Renaissance Phil.", 
+                         AOS.19th_Century_Philosophy == 2 ~ "19th Century Phil.",
+                         AOS.20th_Century_Philosophy == 2 ~ "20th Century Phil.",
+                         AOS.Decision_Theory == 2 ~ "Decision Theory", 
+                         `AOS.Philosophy_of_Gender,_Race,_and_Sexuality` == 2 ~
+                           "Phil. of Gender Race and Sexuality",
+                         AOS.Feminist_Philosophy == 2 ~ "Feminist Phil.",
+                         AOS.Philosophy_of_Physical_Science == 2 ~ "Phil. of Physical Science", 
+                         AOS.General_Philosophy_of_Science == 2 ~ "General Phil. of Science", 
+                         AOS.17thSLASH18th_Century_Philosophy == 2 ~ "17th/18th Century Phil.",
+                         AOS.AfricanSLASHAfricana_Philosophy == 2 ~ "African/Africana Phil.",
+                         AOS.Asian_Philosophy == 2 ~ "Asian Phil.",
+                         AOS.Continental_Philosophy == 2 ~ "Continental Phil.",
+                         AOS.Philosophy_of_the_Americas == 2 ~ "Phil. of the Americas",
+                         TRUE ~ "No Answer"),
+              
+         Nationality = case_when(
+           Nationality.EU == 2 ~ "EU",
+           Nationality.CA == 2~ "Canada",
+           Nationality.US == 2 ~ "USA",
+           Nationality.AF == 2 ~ "Africa",
+           Nationality.OC == 2 ~ "Oceania",
+           Nationality.GB == 2 ~ "Great Britian",
+           Nationality.SA == 2 ~ "South America",
+           Nationality.AS == 2 ~ "Asia",
+                         TRUE ~ "No Answer"
+         ),
+         Age = case_when(
+           YOB %in% c("1959", "1958", "1957", "1956", "1955", "1954", "1953", "1952", "1951", "1950", "1949", "1948", "1947", "1946", "1945", "1944", "1943", "1942", "1941", "1940", "1939", "1938", "1937", "1936") ~ "Older Than 60",
+           YOB %in% c("1960", "1961", "1962", "1963", "1964", "1965", "1966", "1967", "1968", "1969", "1970", "1971", "1972", "1973", "1974", "1975", "1976", "1977", "1978", "1979", "1980") ~ "40 to 60",
+           YOB %in% c("1981", "1982", "1983", "1984", "1985", "1986", "1987", "1988", "1989", "1990", "1991", "1992", "1993", "1994", "1995", "1996", "1997", "1998", "1999", "2000", "2001", "2002", "2003", "2004") ~ "Under 40"
+         ),
+         Tradition = case_when(
+           Region_of_affiliation.EU == "2" ~ "Continental",
+           Region_of_affiliation.US == "2" | Region_of_affiliation.CA == "2" | Region_of_affiliation.OC == "2" |
+             Region_of_affiliation.GB == "2" ~ "Analytic",
+           is.na(Region_of_affiliation.US) ~ "NA",
+           TRUE ~ "Other Traditions"
+         )
+  )
+demo$RespID <- demo$Respondent.ID
+
+
+
+
+##More New variables and continued data frame setup
+
+thesis <- thesis %>%
+  mutate(
+    Abortion = case_when(
+      `Abortion: permissible` %in% c("2", "1") ~ "Permissible",
+      `Abortion: permissible` %in% c("-2", "-1") ~ "Impermissible",
+      `Abortion: permissible` == "not_familiar" ~ "Not familiar",
+      `Abortion: permissible` == "unclear" ~ "Unclear",
+      is.na(`Abortion: permissible`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    A_Priori = case_when(
+      `A priori knowledge: yes` %in% c("2", "1") ~ "Yes",
+      `A priori knowledge: yes` %in% c("-2", "-1") ~ "No",
+      `A priori knowledge: yes` == "not_familiar" ~ "Not familiar",
+      `A priori knowledge: yes` == "unclear" ~ "Unclear",
+      is.na(`A priori knowledge: yes`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Abstract_Objects = case_when(
+      `Abstract objects: nominalism` %in% c("2", "1") ~ "Nominalism",
+      `Abstract objects: nominalism` %in% c("-2", "-1") ~ "Platonism",
+      `Abstract objects: nominalism` == "not_familiar" ~ "Not familiar",
+      `Abstract objects: nominalism` == "unclear" ~ "Unclear",
+      is.na(`Abstract objects: nominalism`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Aesthetic_Value = case_when(
+      `Aesthetic value: objective` %in% c("2", "1") ~ "Objective",
+      `Aesthetic value: objective` %in% c("-2", "-1") ~ "Subjective",
+      is.na(`Aesthetic value: objective`) ~ "NA",
+      `Aesthetic value: objective` == "not_familiar" ~ "Not familiar",
+      `Aesthetic value: objective` == "unclear" ~ "Unclear",
+      TRUE ~ "Other"
+    ),
+    Aim_of_Philosophy = case_when(
+      `Aim of philosophy: goodness/justice` %in% c("2", "1") ~ "Goodness/Justice",
+      `Aim of philosophy: happiness` %in% c("2", "1") ~ "Happiness",
+      `Aim of philosophy: truth/knowledge` %in% c("2", "1") ~ "Truth/Knowledge",
+      `Aim of philosophy: understanding` %in% c("2", "1") ~ "Understanding",
+      `Aim of philosophy: wisdom` %in% c("2", "1") ~ "Wisdom",
+      `Aim of philosophy: wisdom` == "not_familiar" ~ "Not familiar",
+      `Aim of philosophy: wisdom` == "unclear" ~ "Unclear",
+      is.na(`Aim of philosophy: goodness/justice`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Analytic_synthetic_Distinction = case_when(
+      `Analytic-synthetic distinction: yes` %in% c("2", "1") ~ "Yes",
+      `Analytic-synthetic distinction: yes` %in% c("-2", "-1") ~ "No",
+      `Analytic-synthetic distinction: yes` == "not_familiar" ~ "Not familiar",
+      `Analytic-synthetic distinction: yes` == "unclear" ~ "Unclear",
+      is.na(`Analytic-synthetic distinction: yes`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Eating_Animals_Animal_Products = case_when(
+      `Eating animals and animal products: omnivorism (yes and yes)` %in% c("2", "1") ~ "Omnivorism (Yes and Yes)",
+      `Eating animals and animal products: veganism (no and no)` %in% c("2", "1") ~ "Veganism (No and No)",
+      `Eating animals and animal products: vegetarianism (no and yes)` %in% c("2", "1") ~ "Vegetarianism (No and Yes)",
+      `Eating animals and animal products: vegetarianism (no and yes)` == "not_familiar" ~ "Not familiar",
+      `Eating animals and animal products: vegetarianism (no and yes)` == "unclear" ~ "Unclear",
+      is.na(`Eating animals and animal products: vegetarianism (no and yes)`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Epistemic_Justification = case_when(
+      `Epistemic justification: externalism` %in% c("2", "1") ~ "Externalism",
+      `Epistemic justification: externalism` %in% c("-2", "-1") ~ "Internalism",
+      is.na(`Epistemic justification: externalism`) ~ "NA",
+      `Epistemic justification: externalism` == "not_familiar" ~ "Not familiar",
+      `Epistemic justification: externalism` == "unclear" ~ "Unclear",
+      TRUE ~ "Other"
+    ),
+    Experience_Machine = case_when(
+      `Experience machine: yes` %in% c("2", "1") ~ "Yes",
+      `Experience machine: yes` %in% c("-2", "-1") ~ "No",
+      `Experience machine: yes` == "not_familiar" ~ "Not familiar",
+      `Experience machine: yes` == "unclear" ~ "Unclear",
+      is.na(`Experience machine: yes`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    External_World = case_when(
+      `External world: skepticism` %in% c("2", "1") ~ "Skepticism",
+      `External world: idealism` %in% c("2", "1") ~ "Idealism",
+      `External world: non-skeptical realism` %in% c("2", "1") ~ "Non-skeptical Realism",
+      `External world: non-skeptical realism` == "not_familiar" ~ "Not familiar",
+      `External world: non-skeptical realism` == "unclear" ~ "Unclear",
+      is.na(`External world: non-skeptical realism`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Footbridge = case_when(
+      `Footbridge: push` %in% c("2", "1") ~ "Push",
+      `Footbridge: push` %in% c("-2", "-1") ~ "Don't Push",
+      `Footbridge: push` == "not_familiar" ~ "Not familiar",
+      `Footbridge: push` == "unclear" ~ "Unclear",
+      is.na(`Footbridge: push`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Free_Will = case_when(
+      `Free will: compatibilism` %in% c("2", "1") ~ "Compatibilism",
+      `Free will: libertarianism` %in% c("2", "1") ~ "Libertarianism",
+      `Free will: no free will` %in% c("2", "1") ~ "No Free Will",
+      `Free will: no free will` == "not_familiar" ~ "Not familiar",
+      `Free will: no free will` == "unclear" ~ "Unclear",
+      is.na(`Free will: compatibilism`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Gender_Q = case_when(
+      `Gender: biological` %in% c("2", "1") ~ "Biological",
+      `Gender: psychological` %in% c("2", "1") ~ "Psychological",
+      `Gender: social` %in% c("2", "1") ~ "Social",
+      `Gender: unreal` %in% c("2", "1") ~ "Unreal",
+      `Gender: unreal` == "not_familiar" ~ "Not familiar",
+      `Gender: unreal` == "unclear" ~ "Unclear",
+      is.na(`Gender: biological`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    God = case_when(
+      `God: theism` %in% c("2", "1") ~ "Theism",
+      `God: theism` %in% c("-2", "-1") ~ "Atheism",
+      `God: theism` == "not_familiar" ~ "Not familiar",
+      `God: theism` == "unclear" ~ "Unclear",
+      is.na(`God: theism`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Knowledge_Claims = case_when(
+      `Knowledge claims: contextualism` %in% c("2", "1") ~ "Contextualism",
+      `Knowledge claims: invariantism` %in% c("2", "1") ~ "Invariantism",
+      `Knowledge claims: relativism` %in% c("2", "1") ~ "Relativism",
+      `Knowledge claims: relativism` == "not_familiar" ~ "Not familiar",
+      `Knowledge claims: relativism` == "unclear" ~ "Unclear",
+      is.na(`Knowledge claims: relativism`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Knowledge = case_when(
+      `Knowledge: empiricism` %in% c("2", "1") ~ "Empiricism",
+      `Knowledge: empiricism` %in% c("-2", "-1") ~ "Rationalism",
+      `Knowledge: empiricism` == "not_familiar" ~ "Not familiar",
+      `Knowledge: empiricism` == "unclear" ~ "Unclear",
+      is.na(`Knowledge: empiricism`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Laws_of_Nature = case_when(
+      `Laws of nature: Humean` %in% c("2", "1") ~ "Humean",
+      `Laws of nature: Humean` %in% c("-2", "-1") ~ "Non-Humean",
+      `Laws of nature: Humean` == "not_familiar" ~ "Not familiar",
+      `Laws of nature: Humean` == "unclear" ~ "Unclear",
+      is.na(`Laws of nature: Humean`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Logic = case_when(
+      `Logic: classical` %in% c("2", "1") ~ "Classical",
+      `Logic: classical` %in% c("-2", "-1") ~ "Non-Classical",
+      `Logic: classical` == "not_familiar" ~ "Not familiar",
+      `Logic: classical` == "unclear" ~ "Unclear",
+      is.na(`Logic: classical`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Meaning_of_Life = case_when(
+      `Meaning of life: objective` == "2" | `Meaning of life: objective` == "1" ~ "Objective",
+      `Meaning of life: nonexistent` == "2" | `Meaning of life: nonexistent` == "1" ~ "Nonexistent",
+      `Meaning of life: subjective` == "2" | `Meaning of life: subjective` == "1" ~ "Subjective",
+      `Meaning of life: subjective` == "not_familiar" ~ "Not familiar",
+      `Meaning of life: subjective` == "unclear" ~ "Unclear",
+      is.na(`Meaning of life: objective`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Mental_Content = case_when(
+      `Mental content: internalism` == "2" | `Mental content: internalism` == "1" ~ "Internalism",
+      `Mental content: internalism` == "-2" | `Mental content: internalism` == "-1" ~ "Externalism",
+      `Mental content: internalism` == "not_familiar" ~ "Not familiar",
+      `Mental content: internalism` == "unclear" ~ "Unclear",
+      is.na(`Mental content: internalism`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Meta_Ethics = case_when(
+      `Meta-ethics: moral realism` == "2" | `Meta-ethics: moral realism` == "1" ~ "Moral Realism",
+      `Meta-ethics: moral realism` == "-2" | `Meta-ethics: moral realism` == "-1" ~ "Moral Anti-realism",
+      `Meta-ethics: moral realism` == "not_familiar" ~ "Not familiar",
+      `Meta-ethics: moral realism` == "unclear" ~ "Unclear",
+      is.na(`Meta-ethics: moral realism`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Metaphilosophy = case_when(
+      `Metaphilosophy: naturalism` == "2" | `Metaphilosophy: naturalism` == "1" ~ "Naturalism",
+      `Metaphilosophy: naturalism` == "-2" | `Metaphilosophy: naturalism` == "-1" ~ "Non-naturalism",
+      `Metaphilosophy: naturalism` == "not_familiar" ~ "Not familiar",
+      `Metaphilosophy: naturalism` == "unclear" ~ "Unclear",
+      is.na(`Metaphilosophy: naturalism`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Mind = case_when(
+      `Mind: physicalism` == "2" | `Mind: physicalism` == "1" ~ "Physicalism",
+      `Mind: physicalism` == "-2" | `Mind: physicalism` == "-1" ~ "Non-Physicalism",
+      `Mind: physicalism` == "not_familiar" ~ "Not familiar",
+      `Mind: physicalism` == "unclear" ~ "Unclear",
+      is.na(`Mind: physicalism`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Moral_Judgement = case_when(
+      `Moral judgment: cognitivism` == "2" | `Moral judgment: cognitivism` == "1" ~ "Cognitivism",
+      `Moral judgment: cognitivism` == "-2" | `Moral judgment: cognitivism` == "-1" ~ "Non-cognitivism",
+      `Moral judgment: cognitivism` == "not_familiar" ~ "Not familiar",
+      `Moral judgment: cognitivism` == "unclear" ~ "Unclear",
+      is.na(`Moral judgment: cognitivism`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Moral_Motivation = case_when(
+      `Moral motivation: internalism` == "2" | `Moral motivation: internalism` == "1" ~ "Internalism",
+      `Moral motivation: internalism` == "-2" | `Moral motivation: internalism` == "-1" ~ "Externalism",
+      `Moral motivation: internalism` == "not_familiar" ~ "Not familiar",
+      `Moral motivation: internalism` == "unclear" ~ "Unclear",
+      is.na(`Moral motivation: internalism`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Newcombs_Problem = case_when(
+      `Newcomb's problem: one box` == "2" | `Newcomb's problem: one box` == "1" ~ "One Box",
+      `Newcomb's problem: one box` == "-2" | `Newcomb's problem: one box` == "-1" ~ "Two Boxes",
+      `Newcomb's problem: one box` == "not_familiar" ~ "Not familiar",
+      `Newcomb's problem: one box` == "unclear" ~ "Unclear",
+      is.na(`Newcomb's problem: one box`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Normative_Ethics = case_when(
+      `Normative ethics: consequentialism` == "2" | `Normative ethics: consequentialism` == "1" ~ "Consequentialism",
+      `Normative ethics: deontology` == "2" | `Normative ethics: deontology` == "1" ~ "Deontology",
+      `Normative ethics: virtue ethics` == "2" | `Normative ethics: virtue ethics` == "1" ~ "Virtue Ethics",
+      `Normative ethics: virtue ethics` == "not_familiar" ~ "Not familiar",
+      `Normative ethics: virtue ethics` == "unclear" ~ "Unclear",
+      is.na(`Normative ethics: virtue ethics`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Perceptual_Experience = case_when(
+      `Perceptual experience: disjunctivism` == "2" | `Perceptual experience: disjunctivism` == "1" ~ "Disjunctivism",
+      `Perceptual experience: qualia theory` == "2" | `Perceptual experience: qualia theory` == "1" ~ "Qualia Theory",
+      `Perceptual experience: representationalism` == "2" | `Perceptual experience: representationalism` == "1" ~ "Representationalism",
+      `Perceptual experience: sense-datum theory` == "2" | `Perceptual experience: sense-datum theory` == "1" ~ "Sense-datum Theory",
+      `Perceptual experience: sense-datum theory` == "not_familiar" ~ "Not familiar",
+      `Perceptual experience: sense-datum theory` == "unclear" ~ "Unclear",
+      is.na(`Perceptual experience: sense-datum theory`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Personal_Identity = case_when(
+      `Personal identity: biological view` == "2" | `Personal identity: biological view` == "1" ~ "Biological View",
+      `Personal identity: further-fact view` == "2" | `Personal identity: further-fact view` == "1" ~ "Further-fact View",
+      `Personal identity: psychological view` == "2" | `Personal identity: psychological view` == "1" ~ "Psychological View",
+      `Personal identity: psychological view` == "not_familiar" ~ "Not familiar",
+      `Personal identity: psychological view` == "unclear" ~ "Unclear",
+      is.na(`Personal identity: psychological view`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Philosophical_Progress = case_when(
+      `Philosophical progress: a little` == "2" | `Philosophical progress: a little` == "1" ~ "A Little",
+      `Philosophical progress: a lot` == "2" | `Philosophical progress: a lot` == "1" ~ "A Lot",
+      `Philosophical progress: none` == "2" | `Philosophical progress: none` == "1" ~ "None",
+      `Philosophical progress: none` == "not_familiar" ~ "Not familiar",
+      `Philosophical progress: none` == "unclear" ~ "Unclear",
+      is.na(`Philosophical progress: none`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Political_Philosophy = case_when(
+      `Political philosophy: communitarianism` == "2" | `Political philosophy: communitarianism` == "1" ~ "Communitarianism",
+      `Political philosophy: egalitarianism` == "2" | `Political philosophy: egalitarianism` == "1" ~ "Egalitarianism",
+      `Political philosophy: libertarianism` == "2" | `Political philosophy: libertarianism` == "1" ~ "Libertarianism",
+      `Political philosophy: libertarianism` == "not_familiar" ~ "Not familiar",
+      `Political philosophy: libertarianism` == "unclear" ~ "Unclear",
+      is.na(`Political philosophy: libertarianism`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Proper_Names = case_when(
+      `Proper names: Fregean` == "2" | `Proper names: Fregean` == "1" ~ "Fregean",
+      `Proper names: Millian` == "2" | `Proper names: Millian` == "1" ~ "Millian",
+      `Proper names: Millian` == "not_familiar" ~ "Not familiar",
+      `Proper names: Millian` == "unclear" ~ "Unclear",
+      is.na(`Proper names: Millian`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Race = case_when(
+      `Race: biological` == "2" | `Race: biological` == "1" ~ "Biological",
+      `Race: social` == "2" | `Race: social` == "1" ~ "Social",
+      `Race: unreal` == "2" | `Race: unreal` == "1" ~ "Unreal",
+      `Race: unreal` == "not_familiar" ~ "Not familiar",
+      `Race: unreal` == "unclear" ~ "Unclear",
+      is.na(`Race: unreal`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Science = case_when(
+      `Science: scientific realism` == "2" | `Science: scientific realism` == "1" ~ "Scientific Realism",
+      `Science: scientific realism` == "-2" | `Science: scientific realism` == "-1" ~ "Scientific Anti-realism",
+      `Science: scientific realism` == "not_familiar" ~ "Not familiar",
+      `Science: scientific realism` == "unclear" ~ "Unclear",
+      is.na(`Science: scientific realism`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Teletransporter = case_when(
+      `Teletransporter: survival` == "2" | `Teletransporter: survival` == "1" ~ "Survival",
+      `Teletransporter: survival` == "-2" | `Teletransporter: survival` == "-1" ~ "Death",
+      `Teletransporter: survival` == "not_familiar" ~ "Not familiar",
+      `Teletransporter: survival` == "unclear" ~ "Unclear",
+      is.na(`Teletransporter: survival`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Time = case_when(
+      `Time: A-theory` == "2" | `Time: A-theory` == "1" ~ "A-theory",
+      `Time: A-theory` == "-2" | `Time: A-theory` == "-1" ~ "B-theory",
+      `Time: A-theory` == "not_familiar" ~ "Not familiar",
+      `Time: A-theory` == "unclear" ~ "Unclear",
+      is.na(`Time: A-theory`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Trolley_Problem = case_when(
+      `Trolley problem: switch` == "2" | `Trolley problem: switch` == "1" ~ "Switch",
+      `Trolley problem: switch` == "-2" | `Trolley problem: switch` == "-1" ~ "Don't Switch",
+      `Trolley problem: switch` == "not_familiar" ~ "Not familiar",
+      `Trolley problem: switch` == "unclear" ~ "Unclear",
+      is.na(`Trolley problem: switch`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Truth = case_when(
+      `Truth: correspondence` == "2" | `Truth: correspondence` == "1" ~ "Correspondence",
+      `Truth: epistemic` == "2" | `Truth: epistemic` == "1" ~ "Epistemic",
+      `Truth: deflationary` == "2" | `Truth: deflationary` == "1" ~ "Deflationary",
+      `Truth: deflationary` == "not_familiar" ~ "Not familiar",
+      `Truth: deflationary` == "unclear" ~ "Unclear",
+      is.na(`Truth: deflationary`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Vagueness = case_when(
+      `Vagueness: epistemic` == "2" | `Vagueness: epistemic` == "1" ~ "Epistemic",
+      `Vagueness: metaphysical` == "2" | `Vagueness: metaphysical` == "1" ~ "Metaphysical",
+      `Vagueness: semantic` == "2" | `Vagueness: semantic` == "1" ~ "Semantic",
+      `Vagueness: semantic` == "not_familiar" ~ "Not familiar",
+      `Vagueness: semantic` == "unclear" ~ "Unclear",
+      is.na(`Vagueness: semantic`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Zombies = case_when(
+      `Zombies: inconceivable` == "2" | `Zombies: inconceivable` == "1" ~ "Inconceivable",
+      `Zombies: conceivable but not metaphysically possible` == "2" | `Zombies: conceivable but not metaphysically possible` == "1" ~ "Conceivable but not possible",
+      `Zombies: metaphysically possible` == "2" | `Zombies: metaphysically possible` == "1" ~ "Metaphysically possible",
+      `Zombies: metaphysically possible` == "not_familiar" ~ "Not familiar",
+      `Zombies: metaphysically possible` == "unclear" ~ "Unclear",
+      is.na(`Zombies: metaphysically possible`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Aesthetic_Experience = case_when(
+      `Aesthetic experience: perception` == "2" | `Aesthetic experience: perception` == "1" ~ "Perception",
+      `Aesthetic experience: sui generis` == "2" | `Aesthetic experience: sui generis` == "1" ~ "Sui generis",
+      `Aesthetic experience: pleasure` == "2" | `Aesthetic experience: pleasure` == "1" ~ "Pleasure",
+      `Aesthetic experience: pleasure` == "not_familiar" ~ "Not familiar",
+      `Aesthetic experience: pleasure` == "unclear" ~ "Unclear",
+      is.na(`Aesthetic experience: pleasure`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Analysis_of_Knowledge = case_when(
+      `Analysis of knowledge: justified true belief` == "2" | `Analysis of knowledge: justified true belief` == "1" ~ "Justified true belief",
+      `Analysis of knowledge: no analysis` == "2" | `Analysis of knowledge: no analysis` == "1" ~ "No analysis",
+      `Analysis of knowledge: other analysis` == "2" | `Analysis of knowledge: other analysis` == "1" ~ "Other Analysis",
+      `Analysis of knowledge: other analysis` == "not_familiar" ~ "Not familiar",
+      `Analysis of knowledge: other analysis` == "unclear" ~ "Unclear",
+      is.na(`Analysis of knowledge: justified true belief`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Arguments_for_Theism = case_when(
+      `Arguments for theism: design` == "2" | `Arguments for theism: design` == "1" ~ "Design",
+      `Arguments for theism: moral` == "2" | `Arguments for theism: moral` == "1" ~ "Moral",
+      `Arguments for theism: ontological` == "2" | `Arguments for theism: ontological` == "1" ~ "Ontological",
+      `Arguments for theism: cosmological` == "2" | `Arguments for theism: cosmological` == "1" ~ "Cosmological",
+      `Arguments for theism: pragmatic` == "2" | `Arguments for theism: pragmatic` == "1" ~ "Pragmatic",
+      `Arguments for theism: cosmological` == "not_familiar" ~ "Not familiar",
+      `Arguments for theism: cosmological` == "unclear" ~ "Unclear",
+      is.na(`Arguments for theism: pragmatic`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Belief_or_Credence = case_when(
+      `Belief or credence: belief` == "2" | `Belief or credence: belief` == "1" ~ "Belief",
+      `Belief or credence: neither` == "2" | `Belief or credence: neither` == "1" ~ "Neither",
+      `Belief or credence: credence` == "2" | `Belief or credence: credence` == "1" ~ "Credence",
+      `Belief or credence: credence` == "not_familiar" ~ "Not familiar",
+      `Belief or credence: credence` == "unclear" ~ "Unclear",
+      is.na(`Belief or credence: credence`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Capital_Punishment = case_when(
+      `Capital punishment: permissible` %in% c("2", "1") ~ "Permissible",
+      `Capital punishment: permissible` %in% c("-2", "-1") ~ "Impermissible",
+      `Capital punishment: permissible` == "not_familiar" ~ "Not familiar",
+      `Capital punishment: permissible` == "unclear" ~ "Unclear",
+      is.na(`Capital punishment: permissible`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Causation = case_when(
+      `Causation: primitive` %in% c("2", "1") ~ "Primitive",
+      `Causation: nonexistent` %in% c("2", "1") ~ "Nonexistent",
+      `Causation: process/production` %in% c("2", "1") ~ "Process/production",
+      `Causation: counterfactual/difference-making` %in% c("2", "1") ~ "Counterfactual/difference-making",
+      `Causation: counterfactual/difference-making` == "not_familiar" ~ "Not familiar",
+      `Causation: counterfactual/difference-making` == "unclear" ~ "Unclear",
+      is.na(`Causation: counterfactual/difference-making`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Chinese_Room = case_when(
+      `Chinese room: understands` %in% c("2", "1") ~ "Understands",
+      `Chinese room: understands` %in% c("-2", "-1") ~ "Doesn't understand",
+      `Chinese room: understands` == "not_familiar" ~ "Not familiar",
+      `Chinese room: understands` == "unclear" ~ "Unclear",
+      is.na(`Chinese room: understands`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Concepts = case_when(
+      `Concepts: nativism` %in% c("2", "1") ~ "Nativism",
+      `Concepts: nativism` %in% c("-2", "-1") ~ "Empiricism",
+      `Concepts: nativism` == "not_familiar" ~ "Not familiar",
+      `Concepts: nativism` == "unclear" ~ "Unclear",
+      is.na(`Concepts: nativism`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Consciousness = case_when(
+      `Consciousness: dualism` %in% c("2", "1") ~ "Dualism",
+      `Consciousness: eliminativism` %in% c("2", "1") ~ "Eliminativism",
+      `Consciousness: functionalism` %in% c("2", "1") ~ "Functionalism",
+      `Consciousness: identity theory` %in% c("2", "1") ~ "Identity theory",
+      `Consciousness: panpsychism` %in% c("2", "1") ~ "Panpsychism",
+      `Consciousness: panpsychism` == "not_familiar" ~ "Not familiar",
+      `Consciousness: panpsychism` == "unclear" ~ "Unclear",
+      is.na(`Consciousness: panpsychism`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Continuum_Hypothesis = case_when(
+      `Continuum hypothesis: determinate` %in% c("2", "1") ~ "Determinate",
+      `Continuum hypothesis: determinate` %in% c("-2", "-1") ~ "Indeterminate",
+      `Continuum hypothesis: determinate` == "not_familiar" ~ "Not familiar",
+      `Continuum hypothesis: determinate` == "unclear" ~ "Unclear",
+      is.na(`Continuum hypothesis: determinate`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Cosmological_fine_tuning = case_when(
+      `Cosmological fine-tuning: brute fact` %in% c("2", "1") ~ "Brute fact",
+      `Cosmological fine-tuning: no fine-tuning` %in% c("2", "1") ~ "No fine-tuning",
+      `Cosmological fine-tuning: design` %in% c("2", "1") ~ "Design",
+      `Cosmological fine-tuning: multiverse` %in% c("2", "1") ~ "Multiverse",
+      `Cosmological fine-tuning: multiverse` == "not_familiar" ~ "Not familiar",
+      `Cosmological fine-tuning: multiverse` == "unclear" ~ "Unclear",
+      is.na(`Cosmological fine-tuning: design`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Environmental_Ethics = case_when(
+      `Environmental ethics: anthropocentric` %in% c("2", "1") ~ "Anthropocentric",
+      `Environmental ethics: anthropocentric` %in% c("-2", "-1") ~ "Non-anthropocentric",
+      `Environmental ethics: anthropocentric` == "not_familiar" ~ "Not familiar",
+      `Environmental ethics: anthropocentric` == "unclear" ~ "Unclear",
+      is.na(`Environmental ethics: anthropocentric`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Extended_Mind = case_when(
+      `Extended mind: yes` %in% c("2", "1") ~ "Yes",
+      `Extended mind: yes` %in% c("-2", "-1") ~ "No",
+      `Extended mind: yes` == "not_familiar" ~ "Not familiar",
+      `Extended mind: yes` == "unclear" ~ "Unclear",
+      is.na(`Extended mind: yes`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Foundations_of_Mathematics = case_when(
+      `Foundations of mathematics: logicism` %in% c("2", "1") ~ "Logicism",
+      `Foundations of mathematics: formalism` %in% c("2", "1") ~ "Formalism",
+      `Foundations of mathematics: set-theoretic` %in% c("2", "1") ~ "Set-theoretic",
+      `Foundations of mathematics: structuralism` %in% c("2", "1") ~ "Structuralism",
+      `Foundations of mathematics: constructivism/intuitionism` %in% c("2", "1") ~ "Construcivism/intuitionism",
+      `Foundations of mathematics: constructivism/intuitionism` == "not_familiar" ~ "Not familiar",
+      `Foundations of mathematics: constructivism/intuitionism` == "unclear" ~ "Unclear",
+      is.na(`Foundations of mathematics: set-theoretic`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Gender_Categories = case_when(
+      `Gender categories: revise` %in% c("2", "1") ~ "Revise",
+      `Gender categories: preserve` %in% c("2", "1") ~ "Preserve",
+      `Gender categories: eliminate` %in% c("2", "1") ~ "Eliminate",
+      `Gender categories: eliminate` == "not_familiar" ~ "Not familiar",
+      `Gender categories: eliminate` == "unclear" ~ "Unclear",
+      is.na(`Gender categories: eliminate`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Grounds_of_Intentionality = case_when(
+      `Grounds of intentionality: inferential` == "2" | `Grounds of intentionality: inferential` == "1" ~ "Inferential",
+      `Grounds of intentionality: interpretational` == "2" | `Grounds of intentionality: interpretational` == "1" ~ "Interpretational",
+      `Grounds of intentionality: phenomenal` == "2" | `Grounds of intentionality: phenomenal` == "1" ~ "Phenomenal",
+      `Grounds of intentionality: primitive` == "2" | `Grounds of intentionality: primitive` == "1" ~ "Primitive",
+      `Grounds of intentionality: causal/teleological` == "2" | `Grounds of intentionality: causal/teleological` == "1" ~ "Causal/teleological",
+      `Grounds of intentionality: causal/teleological` == "not_familiar" ~ "Not familiar",
+      `Grounds of intentionality: causal/teleological` == "unclear" ~ "Unclear",
+      is.na(`Grounds of intentionality: causal/teleological`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Hard_Problem_of_Consciousness = case_when(
+      `Hard problem of consciousness: yes` == "2" | `Hard problem of consciousness: yes` == "1" ~ "Yes",
+      `Hard problem of consciousness: yes` == "-2" | `Hard problem of consciousness: yes` == "-1" ~ "No",
+      `Hard problem of consciousness: yes` == "not_familiar" ~ "Not familiar",
+      `Hard problem of consciousness: yes` == "unclear" ~ "Unclear",
+      is.na(`Hard problem of consciousness: yes`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Human_Genetic_Engineering = case_when(
+      `Human genetic engineering: permissible` == "2" | `Human genetic engineering: permissible` == "1" ~ "Permissible",
+      `Human genetic engineering: permissible` == "-2" | `Human genetic engineering: permissible` == "-1" ~ "Impermissible",
+      `Human genetic engineering: permissible` == "not_familiar" ~ "Not familiar",
+      `Human genetic engineering: permissible` == "unclear" ~ "Unclear",
+      is.na(`Human genetic engineering: permissible`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Hume = case_when(
+      `Hume: skeptic` == "2" | `Hume: skeptic` == "1" ~ "Skeptic",
+      `Hume: skeptic` == "-2" | `Hume: skeptic` == "-1" ~ "Naturalist",
+      `Hume: skeptic` == "not_familiar" ~ "Not familiar",
+      `Hume: skeptic` == "unclear" ~ "Unclear",
+      is.na(`Hume: skeptic`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Immortality = case_when(
+      `Immortality: yes` == "2" | `Immortality: yes` == "1" ~ "Yes",
+      `Immortality: yes` == "-2" | `Immortality: yes` == "-1" ~ "No",
+      `Immortality: yes` == "not_familiar" ~ "Not familiar",
+      `Immortality: yes` == "unclear" ~ "Unclear",
+      is.na(`Immortality: yes`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Interlevel_Metaphysics = case_when(
+      `Interlevel metaphysics: grounding` == "2" | `Interlevel metaphysics: grounding` == "1" ~ "Grounding",
+      `Interlevel metaphysics: realization` == "2" | `Interlevel metaphysics: realization` == "1" ~ "Realization",
+      `Interlevel metaphysics: identity` == "2" | `Interlevel metaphysics: identity` == "1" ~ "Identity",
+      `Interlevel metaphysics: supervenience` == "2" | `Interlevel metaphysics: supervenience` == "1" ~ "Supervenience",
+      `Interlevel metaphysics: supervenience` == "not_familiar" ~ "Not familiar",
+      `Interlevel metaphysics: supervenience` == "unclear" ~ "Unclear",
+      is.na(`Interlevel metaphysics: grounding`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Justification = case_when(
+      `Justification: coherentism` == "2" | `Justification: coherentism` == "1" ~ "Coherentism",
+      `Justification: infinitism` == "2" | `Justification: infinitism` == "1" ~ "Infinitism",
+      `Justification: nonreliabilist foundationalism` == "2" | `Justification: nonreliabilist foundationalism` == "1" ~ "Foundationalism",
+      `Justification: reliabilism` == "2" | `Justification: reliabilism` == "1" ~ "Reliabilism",
+      `Justification: nonreliabilist foundationalism` == "not_familiar" ~ "Not familiar",
+      `Justification: nonreliabilist foundationalism` == "unclear" ~ "Unclear",
+      is.na(`Justification: reliabilism`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Kant = case_when(
+      `Kant: one world` == "2" | `Kant: one world` == "1" ~ "One world",
+      `Kant: one world` == "-2" | `Kant: one world` == "-1" ~ "Two worlds",
+      `Kant: one world` == "not_familiar" ~ "Not familiar",
+      `Kant: one world` == "unclear" ~ "Unclear",
+      is.na(`Kant: one world`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Material_Composition = case_when(
+      `Material composition: nihilism` == "2" | `Material composition: nihilism` == "1" ~ "Nihilism",
+      `Material composition: universalism` == "2" | `Material composition: universalism` == "1" ~ "Universalism",
+      `Material composition: restrictivism` == "2" | `Material composition: restrictivism` == "1" ~ "Restrictivism",
+      `Material composition: restrictivism` == "not_familiar" ~ "Not familiar",
+      `Material composition: restrictivism` == "unclear" ~ "Unclear",
+      is.na(`Material composition: nihilism`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Law = case_when(
+      `Law: legal positivism` == "2" | `Law: legal positivism` == "1" ~ "Legal positivism",
+      `Law: legal positivism` == "-2" | `Law: legal positivism` == "-1" ~ "Legal non-positivism",
+      `Law: legal positivism` == "not_familiar" ~ "Not familiar",
+      `Law: legal positivism` == "unclear" ~ "Unclear",
+      is.na(`Law: legal positivism`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Metaontology = case_when(
+      `Metaontology: anti-realism` == "2" | `Metaontology: anti-realism` == "1" ~ "Anti-realism",
+      `Metaontology: heavyweight realism` == "2" | `Metaontology: heavyweight realism` == "1" ~ "Heavyweight realism",
+      `Metaontology: deflationary realism` == "2" | `Metaontology: deflationary realism` == "1" ~ "Deflationary realism",
+      `Metaontology: deflationary realism` == "not_familiar" ~ "Not familiar",
+      `Metaontology: deflationary realism` == "unclear" ~ "Unclear",
+      is.na(`Metaontology: anti-realism`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Method_in_History_of_Philosophy = case_when(
+      `Method in history of philosophy: analytic/rational reconstruction` == "2" | `Method in history of philosophy: analytic/rational reconstruction` == "1" ~ "Analytic/rational reconstruction",
+      `Method in history of philosophy: analytic/rational reconstruction` == "-2" | `Method in history of philosophy: analytic/rational reconstruction` == "-1" ~ "Contextual/historicist",
+      `Method in history of philosophy: analytic/rational reconstruction` == "not_familiar" ~ "Not familiar",
+      `Method in history of philosophy: analytic/rational reconstruction` == "unclear" ~ "Unclear",
+      is.na(`Method in history of philosophy: analytic/rational reconstruction`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Method_in_Political_Philosophy = case_when(
+      `Method in political philosophy: ideal theory` == "2" | `Method in political philosophy: ideal theory` == "1" ~ "Ideal theory",
+      `Method in political philosophy: ideal theory` == "-2" | `Method in political philosophy: ideal theory` == "-1" ~ "Non-ideal theory",
+      `Method in political philosophy: ideal theory` == "not_familiar" ~ "Not familiar",
+      `Method in political philosophy: ideal theory` == "unclear" ~ "Unclear",
+      is.na(`Method in political philosophy: ideal theory`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Mind_Uploading = case_when(
+      `Mind uploading: survival` == "2" | `Mind uploading: survival` == "1" ~ "Survival",
+      `Mind uploading: survival` == "-2" | `Mind uploading: survival` == "-1" ~ "Death",
+      `Mind uploading: survival` == "not_familiar" ~ "Not familiar",
+      `Mind uploading: survival` == "unclear" ~ "Unclear",
+      is.na(`Mind uploading: survival`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Moral_Principles = case_when(
+      `Moral principles: moral generalism` == "2" | `Moral principles: moral generalism` == "1" ~ "Moral generalism",
+      `Moral principles: moral generalism` == "-2" | `Moral principles: moral generalism` == "-1" ~ "Moral particularism",
+      `Moral principles: moral generalism` == "not_familiar" ~ "Not familiar",
+      `Moral principles: moral generalism` == "unclear" ~ "Unclear",
+      is.na(`Moral principles: moral generalism`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Morality = case_when(
+      `Morality: error theory` == "2" | `Morality: error theory` == "1" ~ "Error theory",
+      `Morality: constructivism` == "2" | `Morality: constructivism` == "1" ~ "Constructivism",
+      `Morality: expressivism` == "2" | `Morality: expressivism` == "1" ~ "Expressivism",
+      `Morality: naturalist realism` == "2" | `Morality: naturalist realism` == "1" ~ "Naturalist realism",
+      `Morality: non-naturalism` == "2" | `Morality: non-naturalism` == "1" ~ "Non-naturalism",
+      `Morality: non-naturalism` == "not_familiar" ~ "Not familiar",
+      `Morality: non-naturalism` == "unclear" ~ "Unclear",
+      is.na(`Morality: constructivism`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Normative_Concepts = case_when(
+      `Normative concepts: fit` == "2" | `Normative concepts: fit` == "1" ~ "Fit",
+      `Normative concepts: ought` == "2" | `Normative concepts: ought` == "1" ~ "Ought",
+      `Normative concepts: value` == "2" | `Normative concepts: value` == "1" ~ "Value",
+      `Normative concepts: reasons` == "2" | `Normative concepts: reasons` == "1" ~ "Reasons",
+      `Normative concepts: reasons` == "not_familiar" ~ "Not familiar",
+      `Normative concepts: reasons` == "unclear" ~ "Unclear",
+      is.na(`Normative concepts: ought`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Ought_Implies_Can = case_when(
+      `Ought implies can: yes` == "2" | `Ought implies can: yes` == "1" ~ "Yes",
+      `Ought implies can: yes` == "-2" | `Ought implies can: yes` == "-1" ~ "No",
+      `Ought implies can: yes` == "not_familiar" ~ "Not familiar",
+      `Ought implies can: yes` == "unclear" ~ "Unclear",
+      is.na(`Ought implies can: yes`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Philosophical_Knowledge = case_when(
+      `Philosophical knowledge: a little` == "2" | `Philosophical knowledge: a little` == "1" ~ "A little",
+      `Philosophical knowledge: a lot` == "2" | `Philosophical knowledge: a lot` == "1" ~ "A lot",
+      `Philosophical knowledge: none` == "2" | `Philosophical knowledge: none` == "1" ~ "None",
+      `Philosophical knowledge: none` == "not_familiar" ~ "Not familiar",
+      `Philosophical knowledge: none` == "unclear" ~ "Unclear",
+      is.na(`Philosophical knowledge: none`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Plato = case_when(
+      `Plato: knowledge only of forms` == "2" | `Plato: knowledge only of forms` == "1" ~ "Knowledge only of forms",
+      `Plato: knowledge only of forms` == "-2" | `Plato: knowledge only of forms` == "-1" ~ "Knowledge also of concrete things",
+      `Plato: knowledge only of forms` == "not_familiar" ~ "Not familiar",
+      `Plato: knowledge only of forms` == "unclear" ~ "Unclear",
+      is.na(`Plato: knowledge only of forms`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Politics = case_when(
+      `Politics: capitalism` == "2" | `Politics: capitalism` == "1" ~ "Capitalism",
+      `Politics: capitalism` == "-2" | `Politics: capitalism` == "-1" ~ "Socialism",
+      `Politics: capitalism` == "not_familiar" ~ "Not familiar",
+      `Politics: capitalism` == "unclear" ~ "Unclear",
+      is.na(`Politics: capitalism`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Possible_Worlds = case_when(
+      `Possible worlds: abstract` %in% c("2", "1") ~ "Abstract",
+      `Possible worlds: concrete` %in% c("2", "1") ~ "Concrete",
+      `Possible worlds: nonexistent` %in% c("2", "1") ~ "Nonexistent",
+      `Possible worlds: nonexistent` == "not_familiar" ~ "Not familiar",
+      `Possible worlds: nonexistent` == "unclear" ~ "Unclear",
+      is.na(`Possible worlds: nonexistent`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Practical_Reason = case_when(
+      `Practical reason: Aristotelian` %in% c("2", "1") ~ "Aristotelian",
+      `Practical reason: Humean` %in% c("2", "1") ~ "Humean",
+      `Practical reason: Kantian` %in% c("2", "1") ~ "Kantian",
+      `Practical reason: Kantian` == "not_familiar" ~ "Not familiar",
+      `Practical reason: Kantian` == "unclear" ~ "Unclear",
+      is.na(`Practical reason: Aristotelian`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Principle_of_Sufficient_Reason = case_when(
+      `Principle of sufficient reason: true` %in% c("2", "1") ~ "True",
+      `Principle of sufficient reason: true` %in% c("-2", "-1") ~ "False",
+      `Principle of sufficient reason: true` == "not_familiar" ~ "Not familiar",
+      `Principle of sufficient reason: true` == "unclear" ~ "Unclear",
+      is.na(`Principle of sufficient reason: true`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Properties = case_when(
+      `Properties: classes` %in% c("2", "1") ~ "Classes",
+      `Properties: tropes` %in% c("2", "1") ~ "Tropes",
+      `Properties: immanent universals` %in% c("2", "1") ~ "Immanent universals",
+      `Properties: transcendent universals` %in% c("2", "1") ~ "Transcendent universals",
+      `Properties: nonexistent` %in% c("2", "1") ~ "Nonexistent",
+      `Properties: nonexistent` == "not_familiar" ~ "Not familiar",
+      `Properties: nonexistent` == "unclear" ~ "Unclear",
+      is.na(`Properties: immanent universals`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Propositional_Attitudes = case_when(
+      `Propositional attitudes: dispositional` %in% c("2", "1") ~ "Dispositional",
+      `Propositional attitudes: nonexistent` %in% c("2", "1") ~ "Nonexistent",
+      `Propositional attitudes: phenomenal` %in% c("2", "1") ~ "Phenomenal",
+      `Propositional attitudes: representational` %in% c("2", "1") ~ "Representational",
+      `Propositional attitudes: phenomenal` == "not_familiar" ~ "Not familiar",
+      `Propositional attitudes: phenomenal` == "unclear" ~ "Unclear",
+      is.na(`Propositional attitudes: representational`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Propositions = case_when(
+      `Propositions: sets` == "2" | `Propositions: sets` == "1" ~ "Sets",
+      `Propositions: nonexistent` == "2" | `Propositions: nonexistent` == "1" ~ "Nonexistent",
+      `Propositions: acts` == "2" | `Propositions: acts` == "1" ~ "Acts",
+      `Propositions: simple entities` == "2" | `Propositions: simple entities` == "1" ~ "Simple entities",
+      `Propositions: structured entities` == "2" | `Propositions: structured entities` == "1" ~ "Structured entities",
+      `Propositions: structured entities` == "not_familiar" ~ "Not familiar",
+      `Propositions: structured entities` == "unclear" ~ "Unclear",
+      is.na(`Propositions: nonexistent`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Quantum_Mechanics = case_when(
+      `Quantum mechanics: collapse` == "2" | `Quantum mechanics: collapse` == "1" ~ "Collapse",
+      `Quantum mechanics: hidden-variables` == "2" | `Quantum mechanics: hidden-variables` == "1" ~ "Hidden-variables",
+      `Quantum mechanics: many-worlds` == "2" | `Quantum mechanics: many-worlds` == "1" ~ "Many-worlds",
+      `Quantum mechanics: epistemic` == "2" | `Quantum mechanics: epistemic` == "1" ~ "Epistemic",
+      `Quantum mechanics: epistemic` == "not_familiar" ~ "Not familiar",
+      `Quantum mechanics: epistemic` == "unclear" ~ "Unclear",
+      is.na(`Quantum mechanics: epistemic`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Race_Categories = case_when(
+      `Race categories: preserve` %in% c("2", "1") ~ "Preserve",
+      `Race categories: revise` %in% c("2", "1") ~ "Revise",
+      `Race categories: eliminate` %in% c("2", "1") ~ "Eliminate",
+      `Race categories: eliminate` == "not_familiar" ~ "Not familiar",
+      `Race categories: eliminate` == "unclear" ~ "Unclear",
+      is.na(`Race categories: eliminate`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Rational_Disagreement = case_when(
+      `Rational disagreement: permissivism` %in% c("2", "1") ~ "Permissivism",
+      `Rational disagreement: permissivism` %in% c("-2", "-1") ~ "Non-permissivism",
+      `Rational disagreement: permissivism` == "not_familiar" ~ "Not familiar",
+      `Rational disagreement: permissivism` == "unclear" ~ "Unclear",
+      is.na(`Rational disagreement: permissivism`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Response_to_External_World_Skepticism = case_when(
+      `Response to external-world skepticism: abductive` %in% c("2", "1") ~ "Abductive",
+      `Response to external-world skepticism: contextualist` %in% c("2", "1") ~ "Contextualist",
+      `Response to external-world skepticism: pragmatic` %in% c("2", "1") ~ "Pragmatic",
+      `Response to external-world skepticism: dogmatist` %in% c("2", "1") ~ "Dogmatist",
+      `Response to external-world skepticism: epistemic externalist` %in% c("2", "1") ~ "Epistemic externalist",
+      `Response to external-world skepticism: semantic externalist` %in% c("2", "1") ~ "Semantic externalist",
+      `Response to external-world skepticism: semantic externalist` == "not_familiar" ~ "Not familiar",
+      `Response to external-world skepticism: semantic externalist` == "unclear" ~ "Unclear",
+      is.na(`Response to external-world skepticism: epistemic externalist`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Semantic_Content = case_when(
+      `Semantic content: radical contextualism (most or all)` %in% c("2", "1") ~ "Radical contextualism (most or all)",
+      `Semantic content: minimalism (no more than a few)` %in% c("2", "1") ~ "Minimalism (no more than a few)",
+      `Semantic content: moderate contextualism (intermediate)` %in% c("2", "1") ~ "Moderate contextualism (intermediate)",
+      `Semantic content: moderate contextualism (intermediate)` == "not_familiar" ~ "Not familiar",
+      `Semantic content: moderate contextualism (intermediate)` == "unclear" ~ "Unclear",
+      is.na(`Semantic content: moderate contextualism (intermediate)`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Sleeping_Beauty = case_when(
+      `Sleeping beauty: one-third` %in% c("2", "1") ~ "One-third",
+      `Sleeping beauty: one-third` %in% c("-2", "-1") ~ "One-half",
+      `Sleeping beauty: one-third` == "not_familiar" ~ "Not familiar",
+      `Sleeping beauty: one-third` == "unclear" ~ "Unclear",
+      is.na(`Sleeping beauty: one-third`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Spacetime = case_when(
+      `Spacetime: substantivalism` %in% c("2", "1") ~ "Substantivalism",
+      `Spacetime: substantivalism` %in% c("-2", "-1") ~ "Relationism",
+      `Spacetime: substantivalism` == "not_familiar" ~ "Not familiar",
+      `Spacetime: substantivalism` == "unclear" ~ "Unclear",
+      is.na(`Spacetime: substantivalism`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Statue_and_Lump = case_when(
+      `Statue and lump: one thing` %in% c("2", "1") ~ "One thing",
+      `Statue and lump: one thing` %in% c("-2", "-1") ~ "Two things",
+      `Statue and lump: one thing` == "not_familiar" ~ "Not familiar",
+      `Statue and lump: one thing` == "unclear" ~ "Unclear",
+      is.na(`Statue and lump: one thing`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Temporal_Ontology = case_when(
+      `Temporal ontology: growing block` %in% c("2", "1") ~ "Growing block",
+      `Temporal ontology: presentism` %in% c("2", "1") ~ "Presentism",
+      `Temporal ontology: eternalism` %in% c("2", "1") ~ "Eternalism",
+      `Temporal ontology: eternalism` == "not_familiar" ~ "Not familiar",
+      `Temporal ontology: eternalism` == "unclear" ~ "Unclear",
+      is.na(`Temporal ontology: presentism`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Theory_of_Reference = case_when(
+      `Theory of reference: causal` %in% c("2", "1") ~ "Causal",
+      `Theory of reference: descriptive` %in% c("2", "1") ~ "Descriptive",
+      `Theory of reference: deflationary` %in% c("2", "1") ~ "Deflationary",
+      `Theory of reference: deflationary` == "not_familiar" ~ "Not familiar",
+      `Theory of reference: deflationary` == "unclear" ~ "Unclear",
+      is.na(`Theory of reference: causal`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Time_Travel = case_when(
+      `Time travel: metaphysically possible` %in% c("2", "1") ~ "Metaphysically possible",
+      `Time travel: metaphysically possible` %in% c("-2", "-1") ~ "Metaphysically Impossible",
+      `Time travel: metaphysically possible` == "not_familiar" ~ "Not familiar",
+      `Time travel: metaphysically possible` == "unclear" ~ "Unclear",
+      is.na(`Time travel: metaphysically possible`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    True_Contradictions = case_when(
+      `True contradictions: possible but non-actual` %in% c("2", "1") ~ "Possible but non-actual",
+      `True contradictions: actual` %in% c("2", "1") ~ "Actual",
+      `True contradictions: impossible` %in% c("2", "1") ~ "Impossible",
+      `True contradictions: impossible` == "not_familiar" ~ "Not familiar",
+      `True contradictions: impossible` == "unclear" ~ "Unclear",
+      is.na(`True contradictions: actual`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Units_of_Selection = case_when(
+      `Units of selection: genes` %in% c("2", "1") ~ "Genes",
+      `Units of selection: genes` %in% c("-2", "-1") ~ "Organisms",
+      `Units of selection: genes` == "not_familiar" ~ "Not familiar",
+      `Units of selection: genes` == "unclear" ~ "Unclear",
+      is.na(`Units of selection: genes`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Values_in_Science = case_when(
+      `Values in science: can be either` %in% c("2", "1") ~ "Can be either",
+      `Values in science: necessarily value-free` %in% c("2", "-") ~ "Necessarily value-free",
+      `Values in science: necessarily value-laden` %in% c("2", "-") ~ "Necessarily value-laden",
+      `Values in science: necessarily value-laden` == "not_familiar" ~ "Not familiar",
+      `Values in science: necessarily value-laden` == "unclear" ~ "Unclear",
+      is.na(`Values in science: can be either`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Well_Being = case_when(
+      `Well-being: hedonism/experientialism` %in% c("2", "1") ~ "Hedonism/experientialism",
+      `Well-being: desire satisfaction` %in% c("2", "1") ~ "Desire satisfaction",
+      `Well-being: objective list` %in% c("2", "1") ~ "Objective list",
+      `Well-being: objective list` == "not_familiar" ~ "Not familiar",
+      `Well-being: objective list` == "unclear" ~ "Unclear",
+      is.na(`Well-being: desire satisfaction`) ~ "NA",
+      TRUE ~ "Other"
+    ),
+    Wittgenstein = case_when(
+      `Wittgenstein: early` %in% c("2", "1") ~ "Early",
+      `Wittgenstein: early` %in% c("-2", "-1") ~ "Late",
+      `Wittgenstein: early` == "not_familiar" ~ "Not familiar",
+      `Wittgenstein: early` == "unclear" ~ "Unclear",
+      is.na(`Wittgenstein: early`) ~ "NA",
+      TRUE ~ "Other"
+    )
+
+  )
+
+
+
+main <- merge(demo, thesis, by = "RespID", all = TRUE)
+
+
+main <- main %>%
+  mutate(
+aoscategory = case_when(
+  aos == "Epistimology"| aos == "Metaphilosophy" | aos == "Metaphysics" | aos == "Phil. of Action" | aos == "Phil. of Language" | aos == "Phil. of Mind" | aos == "Phil. of Religion" | aos == "Decision Theory" 
+  ~ "Metaphysics and Epistimology",
+  aos == "Aesthetics" | aos == "Applied Ethics" | aos == "Meta-Ethics" | aos == "Normative Ethics" | aos == "Phil. of Law" | aos == "Social and Political Phil." |  aos == "Phil. of Gender Race and Sexuality"  
+    ~ "Value Theory",
+  aos == "Logic and Phil. of Logic" |aos == "Phil. of Biology" |aos == "Phil. of Cognitive Science" |aos == "Phil. of Comp. and Info." |aos == "Phil. of Mathematics" |aos == "Phil. of Social Science" |aos == "Phil. of Physical Science" |aos == "General Phil. of Science" 
+  ~ "Science, Logic, and Mathematics",
+  aos == "Ancient Greek and Roman Phil." |aos == "Medieval and Renaissance Phil." |aos == "19th Century Phil." |aos == "20th Century Phil." |aos == "17th/18th Century Phil." 
+  ~ "History of Western Philosophy",
+    aos == "Asian Phil." |aos == "Continental Phil." |aos == "African/Africana Phil." |aos == "Phil. of the Americas" |aos == "Feminist Phil."
+  ~ "Philosophical Traditions",
+  is.na(aos) ~ "NA",
+), 
+Normativity_or_Metaphysically = case_when(
+  aoscategory == "Metaphysics and Epistimology" ~ "Normativity-Focused",
+  is.na(aoscategory) ~ "NA",
+      TRUE ~ "Metaphysically-Focused"
+)
+)
+
+
+main <- main %>%
+  mutate(
+philosopherall = case_when(
+  Philosopher.adolf_reinach == "2" ~ "Reinach",
+  Philosopher.Adorno== "2" ~ "Adorno",
+  Philosopher.Annette_Baier== "2" ~ "Baier",
+  Philosopher.Anscombe== "2" ~ "Anscombe",
+  Philosopher.Anselm== "2" ~ "Anselm",
+  Philosopher.Aquinas== "2" ~ "Aquinas",
+  Philosopher.Arendt== "2" ~ "Arendt",
+  Philosopher.Aristotle== "2" ~ "Aristotle",
+  Philosopher.Asaṅga== "2" ~ "Asaṅga",
+  Philosopher.Augustine== "2" ~ "Augustine",
+  Philosopher.Austin | Philosopher.J.L._Austin== "2" ~ "Austin",
+  Philosopher.Avicenna== "2" ~ "Avicenna",
+  Philosopher.Ayer== "2" ~ "Ayer",
+  Philosopher.Bacon== "2" ~ "Bacon",
+  Philosopher.Barcan== "2" ~ "Barcan",
+  Philosopher.Battin== "2" ~ "Battin",
+  Philosopher.Baylean== "2" ~ "Baylean",
+  Philosopher.Bergson== "2" ~ "Bergson",
+  Philosopher.Berkeley== "2" ~ "Berkeley",
+  Philosopher.Bernard_Gert== "2" ~ "Gert",
+  Philosopher.Bernard_Williams | Philosopher.Williams== "2" ~ "Bernard Williams",
+  Philosopher.Blanché== "2" ~ "Blanché",
+  Philosopher.Boethius== "2" ~ "Boethius",
+  Philosopher.Bolzano== "2" ~ "Bolzano",
+  Philosopher.Bonaventura== "2" ~ "Bonaventura",
+  Philosopher.Bonhoeffer_== "2" ~ "Bonhoeffer",
+  Philosopher.Bradley== "2" ~ "Bradley",
+  Philosopher.Brentano== "2" ~ "Brentano",
+  Philosopher.Buchler== "2" ~ "Buchler",
+  Philosopher.Buddha== "2" ~ "Buddha",
+  Philosopher.Burke== "2" ~ "Burke",
+  Philosopher.Burley== "2" ~ "Burley",
+  Philosopher.C._A._Strong== "2" ~ "Strong",
+  Philosopher.C._B._Martin== "2" ~ "Martin",
+  Philosopher.C.I._Lewis== "2" ~ "C.I. Lewis",
+  Philosopher.Camus== "2" ~ "Camus",
+  Philosopher.Carnap== "2" ~ "Carnap",
+  Philosopher.Cassirer== "2" ~ "Cassirer",
+  Philosopher.Castaneda== "2" ~ "Castaneda",
+  Philosopher.Cavell== "2" ~ "Cavell",
+  Philosopher.Cavendish== "2" ~ "Cavendish",
+  Philosopher.Charles_Stevenson== "2" ~ "Stevenson",
+  Philosopher.Chisholm | Philosopher.Roderick_Chisholm== "2" ~ "Chisholm",
+  Philosopher.Chomsky== "2" ~ "Chomsky",
+  Philosopher.Chretien== "2" ~ "Chretien",
+  Philosopher.Chrysippus== "2" ~ "Chrysippus",
+  Philosopher.Cicero== "2" ~ "Cicero",
+  Philosopher.Collingwood== "2" ~ "Collingwood",
+  Philosopher.Conee== "2" ~ "Conee",
+  Philosopher.Confucius== "2" ~ "Confucius",
+  Philosopher.D._C._Williams== "2" ~ "D.C. Williams",
+  Philosopher.Davidson | Philosopher.Donald_Davidson== "2" ~ "Davidson",
+  Philosopher.de_beauvoir | Philosopher.Beauvoir== "2" ~ "De Beauvoir",
+  Philosopher.Deleuze== "2" ~ "Deleuze",
+  Philosopher.Democritus== "2" ~ "Democritus",
+  Philosopher.Dennett== "2" ~ "Dennett",
+  Philosopher.Derrida== "2" ~ "Derrida",
+  Philosopher.Descartes== "2" ~ "Descartes",
+  Philosopher.Dewey== "2" ~ "Dewey",
+  Philosopher.Diderot== "2" ~ "Diderot",
+  Philosopher.Dretske== "2" ~ "Dretske",
+  Philosopher.Du_Bois== "2" ~ "Du Bois",
+  Philosopher.Dummett== "2" ~ "Dummett",
+  Philosopher.Dworkin== "2" ~ "Dworkin",
+  Philosopher.Einstein== "2" ~ "Einstein",
+  Philosopher.Emerson== "2" ~ "Emerson",
+  Philosopher.Empedocles== "2" ~ "Empedocles",
+  Philosopher.Epictetus== "2" ~ "Epictetus",
+  Philosopher.Epicurus== "2" ~ "Epicurus",
+  Philosopher.Ernesto_Grassi== "2" ~ "Grassi",
+  Philosopher.Evans== "2" ~ "Evans",                         ##Who
+  Philosopher.Everett== "2" ~ "Everett",
+  Philosopher.fanon== "2" ~ "Fanon",
+  Philosopher.Feldman== "2" ~ "Feldman",
+  Philosopher.Feyerabend== "2" ~ "Feyerabend",
+  Philosopher.Fichte== "2" ~ "Fichte",
+  Philosopher.Fodor | Philosopher.Jerry_Fodor== "2" ~ "Fodor",
+  Philosopher.Foucault== "2" ~ "Foucault",
+  Philosopher.Francisco_Suárez== "2" ~ "Suárez",
+  Philosopher.Frege== "2" ~ "Frege",
+  Philosopher.Freud== "2" ~ "Freud",
+  Philosopher.Frye== "2" ~ "Frye",
+  Philosopher.Gandhi== "2" ~ "Gandhi",
+  Philosopher.Gareth_Evans== "2" ~ "Gareth Evans",
+  Philosopher.Geach== "2" ~ "Geach",
+  Philosopher.Gerald_Gaus== "2" ~ "Gaus",
+  Philosopher.Gibson== "2" ~ "Gibson",
+  Philosopher.Giere== "2" ~ "Giere",
+  Philosopher.Giordano_Bruno== "2" ~ "Bruno",
+  Philosopher.Goodman== "2" ~ "Goodman",
+  Philosopher.Gracia== "2" ~ "Gracia",
+  Philosopher.Grene== "2" ~ "Grene",
+  Philosopher.Grice== "2" ~ "Grice",
+  Philosopher.H.H._Price== "2" ~ "H.H. Price",
+  Philosopher.Hans_Jonas== "2" ~ "Jonas",
+  Philosopher.Hare== "2" ~ "Hare",
+  Philosopher.Hart== "2" ~ "Hart",
+  Philosopher.Hayek== "2" ~ "Hayek",
+  Philosopher.Hegel== "2" ~ "Hegel",
+  Philosopher.Heidegger== "2" ~ "Heidegger",
+  Philosopher.Hempel== "2" ~ "Hempel",
+  Philosopher.Heraclitus== "2" ~ "Heraclitus",
+  Philosopher.Hintikka== "2" ~ "Hintikka",
+  Philosopher.Hobbes== "2" ~ "Hobbes",
+  Philosopher.Hohfeld== "2" ~ "Hohfeld",
+  Philosopher.Hull== "2" ~ "Hull",
+  Philosopher.Hume | Philosopher.Hum | Philosopher.David_Hume== "2" ~ "Hume",
+  Philosopher.Hurley== "2" ~ "Hurley",
+  Philosopher.Husserl== "2" ~ "Husserl",
+  Philosopher.Ingarden== "2" ~ "Ingarden",
+  Philosopher.Iris_Marion_Young== "2" ~ "Iris Marion Young",
+  Philosopher.James== "2" ~ "James",
+  Philosopher.James_Baldwin== "2" ~ "Baldwin",
+  Philosopher.Jayarāśi== "2" ~ "Jayarāśi",
+  Philosopher.Ji_Kang_== "2" ~ "Ji Kang",
+  Philosopher.Joel_feinberg== "2" ~ "Feinberg",
+  Philosopher.John_Duns_Scotus | Philosopher.Duns_Scotus== "2" ~ "Duns Scotus",
+  Philosopher.Kant== "2" | Philosopher.Kantian== "2" ~ "Kant",
+  Philosopher.Kazimierz_Twardowski== "2" ~ "Twardowski",
+  Philosopher.kelsen == "2" ~ "Kelson",
+  Philosopher.Keynes== "2" ~ "Keynes",
+  Philosopher.Kierkegaard== "2" ~ "Kierkegaard",
+  Philosopher.Kim== "2" ~ "Kim",
+  Philosopher.Kit_Fine== "2" ~ "Fine",
+  Philosopher.Kripke_== "2" ~ "Kripke",
+  Philosopher.Kropotkin== "2" ~ "Kropotkin",
+  Philosopher.Kuhn== "2" ~ "Kuhn",
+  Philosopher.Laozi== "2" ~ "Laozi",
+  Philosopher.Leibniz== "2" ~ "Leibniz",
+  Philosopher.Levinas== "2" ~ "Levinas",
+  Philosopher.Lewis== "2" ~ "Lewis",                                      ##Who
+  Philosopher.Locke== "2" ~ "Locke",
+  Philosopher.Lowe | Philosopher.E.J._Lowe== "2" ~ "Lowe",
+  Philosopher.Luce_Irigaray== "2" ~ "Irigaray",
+  Philosopher.Lugones== "2" ~ "Lugones",
+  Philosopher.Lukacs== "2" ~ "Lukacs",
+  Philosopher.machiavelli== "2" ~ "Machiavelli",
+  Philosopher.mellor== "2" ~ "Mellor",
+  Philosopher.Mackie== "2" ~ "Mackie",
+  Philosopher.Maimon== "2" ~ "Maimon",
+  Philosopher.none== "2" ~ "No Philosopher",
+  Philosopher.Prefer_not_to_answer== "2" ~ "Prefer Not To Answer",
+  Philosopher.Naess | Philosopher.Arne_Næss== "2" ~ "Næss",
+  Philosopher.Newton== "2" ~ "Newton",
+  Philosopher.Nicholas_of_Cusa== "2" ~ "Nicholas of Cusa",
+  Philosopher.Nietzsche== "2" ~ "Nietzsche",
+  Philosopher.Nozick== "2" ~ "Nozick",
+  Philosopher.Nāgārjuna== "2" ~ "Nāgārjuna",
+  Philosopher.okin== "2" ~ "Okin",
+  Philosopher.Ockham | Philosopher.Ockham_Montaigne== "2" ~ "Ockham",
+  Philosopher.Ortega_y_Gasset== "2" ~ "Ortega y Gasset",
+  Philosopher.Parfit | Philosopher.Parfitian== "2" ~ "Parfit",
+  Philosopher.Parmenides | `Philosopher.Parmenides_(necessitarianism`== "2" ~ "Parmenides",
+  Philosopher.Peirce== "2" ~ "Peirce",
+  Philosopher.Philippe_Foot== "2" ~ "Foot",
+  Philosopher.Plato== "2" ~ "Plato",
+  Philosopher.Plotinus== "2" ~ "Plotinus",
+  Philosopher.Plumwood== "2" ~ "Plumwood",
+  Philosopher.Poincare== "2" ~ "Poincare",
+  Philosopher.Popper | Philosopher.Karl_Popper== "2" ~ "Popper",
+  Philosopher.Prior | Philosopher.Arthur_Prior == "2" ~ "Prior",
+  Philosopher.Przełęcki== "2" ~ "Przełęcki",
+  Philosopher.PseudoDDDionysius_the_Areopagite== "2" ~ "Dionysius",
+  Philosopher.Putnam== "2" ~ "Putnam",
+  Philosopher.Pyrhho | Philosopher.Pyrrho== "2" ~ "Pyrrho",
+  Philosopher.Quine== "2" ~ "Quine",
+  Philosopher.ramsey== "2" ~ "Ramsey",
+  Philosopher.Railton== "2" ~ "Railton",
+  Philosopher.Rawls== "2" ~ "Rawls",
+  Philosopher.Reichenbach== "2" ~ "Reichenbach",
+  Philosopher.Reid== "2" ~ "Reid",                                      ##Who
+  Philosopher.Richard_Montague== "2" ~ "Richard Montague",
+  Philosopher.Robert_Adams== "2" ~ "Robert Adams",
+  Philosopher.Rorty== "2" ~ "Rorty",
+  Philosopher.Rosa_Luxemburg== "2" ~ "Luxemburg",
+  Philosopher.Ross...180 | Philosopher.W._D._Ross | Philosopher.Ross...169== "2" ~ "Ross",
+  Philosopher.Rousseau== "2" ~ "Rousseau",
+  Philosopher.Russell | Philosopher.Bertrand_Russell== "2" ~ "Russell",
+  Philosopher.Ryle== "2" ~ "Ryle",
+  Philosopher.smart== "2" ~ "Smart",
+  Philosopher.sneed== "2" ~ "Sneed",
+  Philosopher.C._A._Strong== "2" ~ "C.A. Strong",
+  Philosopher.Salmon== "2" ~ "Salmon",
+  Philosopher.Sandra_Bartky== "2" ~ "Bartky",
+  Philosopher.Sartre== "2" ~ "Sartre",
+  Philosopher.Schelling== "2" ~ "Schelling",
+  Philosopher.Schopenhauer== "2" ~ "Schopenhauer",
+  Philosopher.Sellars | Philosopher.Wilfrid_Sellars== "2" ~ "Sellars",
+  Philosopher.Sextus_Empiricus== "2" ~ "Empiricus",
+  Philosopher.Shankaracharya== "2" ~ "Shankaracharya",
+  Philosopher.Shepherd== "2" ~ "Shepherd",
+  Philosopher.Sidgwick== "2" ~ "Sidgwick",
+  Philosopher.Smith | `Philosopher.Smith,_Adam`== "2" ~ "Adam Smith",
+  Philosopher.Socrates== "2" ~ "Socrates",
+  Philosopher.Spinoza== "2" ~ "Spinoza",
+  Philosopher.Stebbing== "2" ~ "Stebbing",
+  Philosopher.Stoic== "2" ~ "Stoic",
+  Philosopher.Strawson== "2" ~ "Strawson",
+  Philosopher.Suarez== "2" ~ "Suarez",
+  Philosopher.Sue_Campbell== "2" ~ "Sue Campbell",
+  Philosopher.Suppes== "2" ~ "Suppes",
+  Philosopher.Susan_Hurley== "2" ~ "Susan Hurley",
+  Philosopher.Sylvan== "2" ~ "Sylvan",
+  Philosopher.Tarski | Philosopher.Alfred_Tarski == "2" ~ "Tarski",
+  Philosopher.Thoreau== "2" ~ "Thoreau",
+  Philosopher.Tocqueville== "2" ~ "Tocqueville",
+  Philosopher.Unamuno== "2" ~ "Unamuno",
+  Philosopher.Vasubandhu== "2" ~ "Vasubandhu",
+  Philosopher.wollheim== "2" ~ "Wollheim",
+  Philosopher.W._C._Fields== "2" ~ "W.C. Fields",
+  Philosopher.Walzer== "2" ~ "Walzer",
+  Philosopher.Weyl== "2" ~ "Weyl",
+  Philosopher.Whitehead== "2" ~ "Whitehead",
+  Philosopher.William_James== "2" ~ "William James",
+  Philosopher.Wittgenstein== "2" ~ "Wittgenstein",
+  Philosopher.Wollstonecraft== "2" ~ "Wollstonecraft",
+  Philosopher.Young== "2" ~ "Young",
+  Philosopher.Zhuangzi== "2" ~ "Zhuangzi",
+  is.na(Philosopher.Frege) | Philosopher.nSLASHa ~ "No Answer",
+  TRUE ~ "No Answer"
+  
+),
+Philosopher = case_when(
+  philosopherall== "Anscombe" ~ "Anscombe",
+  philosopherall== "Aquinas" ~ "Aquinas",
+  philosopherall== "Arendt" ~ "Arendt",
+  philosopherall== "Aristotle" ~ "Aristotle",
+  philosopherall== "Augustine" ~ "Augustine",
+  philosopherall== "Austin" ~ "Austin",
+  philosopherall== "Berkeley" ~ "Berkeley",
+  philosopherall== "Carnap" ~ "Carnap",
+  philosopherall== "Davidson" ~ "Davidson",
+  philosopherall== "De Beauvoir" ~ "De Beauvoir",
+  philosopherall== "Descartes" ~ "Descartes",
+  philosopherall== "Dewey" ~ "Dewey",
+  philosopherall== "Foucault" ~ "Foucault",
+  philosopherall== "Frege" ~ "Frege",
+  philosopherall== "Hegel" ~ "Hegel",
+  philosopherall== "Heidegger" ~ "Heidegger",
+  philosopherall== "Hobbes" ~ "Hobbes",
+  philosopherall== "Hume" ~ "Hume",
+  philosopherall== "Husserl" ~ "Husserl",
+  philosopherall== "James" ~ "James",
+  philosopherall== "Kant" ~ "Kant",
+  philosopherall== "Leibniz" ~ "Leibniz",
+  philosopherall== "Locke" ~ "Locke",
+  philosopherall== "No Answer" ~ "No Answer",
+  philosopherall== "Parfit" ~ "Parfit",
+  philosopherall== "Plato" ~ "Plato",
+  philosopherall== "Quine" ~ "Quine",
+  philosopherall== "Rawls" ~ "Rawls",
+  philosopherall== "Russell" ~ "Russell",
+  philosopherall== "Socrates" ~ "Socrates",
+  philosopherall== "Wittgenstein" ~ "Wittgenstein",
+  TRUE ~ "Other"
+  ),
+
+Philosopherover20 = case_when(
+  philosopherall== "Anscombe" ~ "Anscombe",
+  philosopherall== "Aquinas" ~ "Aquinas",
+  philosopherall== "Aristotle" ~ "Aristotle",
+  philosopherall== "Carnap" ~ "Carnap",
+  philosopherall== "Davidson" ~ "Davidson",
+  philosopherall== "Descartes" ~ "Descartes",
+  philosopherall== "Dewey" ~ "Dewey",
+  philosopherall== "Frege" ~ "Frege",
+  philosopherall== "Hegel" ~ "Hegel",
+  philosopherall== "Hume" ~ "Hume",
+  philosopherall== "Kant" ~ "Kant",
+  philosopherall== "No Answer" ~ "No Answer",
+  philosopherall== "Parfit" ~ "Parfit",
+  philosopherall== "Rawls" ~ "Rawls",
+  TRUE ~ "Other"
+)
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+   plotmain <- main %>% 
+  group_by(aoscategory) %>% 
+  count() %>% 
+  ungroup() %>% 
+  mutate_at('aoscategory', ~replace_na(.,"No Answer")) %>%
+  mutate(perc = n / sum(n)) %>% 
+  arrange(perc) %>%
+  mutate(ypos = cumsum(perc)- 0.5*perc,
+         aoscategory = factor(aoscategory, levels=aoscategory[order(-(perc))], ordered=TRUE))
+
+
+ plotmain$perc <- as.numeric(plotmain$perc)
+
+ plotmain <- plotmain %>%
+   mutate(labels = percent(perc),
+          labels = factor(labels, levels=labels[order(-(perc))], ordered=TRUE))
+         
+ plotmain$labels <- as.character(plotmain$labels)
+ 
+    plotmain2 <- main %>% 
+  mutate_at('aoscategory', ~replace_na(.,"No Answer"))
+
+
+mainsub <- main[, c("Tradition","aos", "YOB", "Gender", "aoscategory", "Age", "Nationality", "Abortion", "A_Priori","Abstract_Objects","Normativity_or_Metaphysically", "Aesthetic_Value", "Aim_of_Philosophy", "Analytic_synthetic_Distinction", "Eating_Animals_Animal_Products", "Epistemic_Justification", "Experience_Machine", "External_World", "Footbridge", "Free_Will", "Gender_Q", "God", "Knowledge_Claims", "Knowledge", "Laws_of_Nature", "Logic", "Meaning_of_Life", "Mental_Content", "Meta_Ethics", "Metaphilosophy", "Mind", "Moral_Judgement", "Moral_Motivation", "Newcombs_Problem", "Normative_Ethics", "Perceptual_Experience", "Personal_Identity", "Philosophical_Progress", "Political_Philosophy", "Proper_Names", "Race", "Science", "Teletransporter", "Time", "Trolley_Problem", "Truth", "Vagueness", "Zombies", "Aesthetic_Experience", "Analysis_of_Knowledge", "Arguments_for_Theism", "Belief_or_Credence", "Capital_Punishment", "Chinese_Room", "Concepts", "Consciousness", "Continuum_Hypothesis", "Cosmological_fine_tuning", "Environmental_Ethics", "Extended_Mind", "Foundations_of_Mathematics", "Gender_Categories", "Grounds_of_Intentionality", "Hard_Problem_of_Consciousness", "Human_Genetic_Engineering", "Hume", "Immortality", "Interlevel_Metaphysics", "Justification", "Kant", "Law", "Material_Composition", "Metaontology", "Method_in_History_of_Philosophy", "Method_in_Political_Philosophy", "Mind_Uploading", "Moral_Principles", "Morality", "Normative_Concepts", "Ought_Implies_Can", "Philosophical_Knowledge", "Plato", "Politics", "Possible_Worlds", "Practical_Reason", "Principle_of_Sufficient_Reason", "Properties", "Propositional_Attitudes", "Propositions", "Quantum_Mechanics", "Race_Categories", "Rational_Disagreement", "Response_to_External_World_Skepticism", "Semantic_Content", "Sleeping_Beauty", "Spacetime", "Statue_and_Lump", "Temporal_Ontology", "Theory_of_Reference", "Time_Travel", "True_Contradictions", "Units_of_Selection", "Values_in_Science", "Well_Being", "Wittgenstein", "Philosopher"), drop = FALSE]
+         
+```
+All variable cleanup ^
+
+
+
+```{r}
+##Other extra random plots
+ggplot(data = demo, aes(x = YOB, fill = Gender)) +
+      geom_histogram(binwidth = 5.5) +
+  ylab("Count") +
+  xlab("Year of Birth") +
+  ggtitle("Age and Gender of Participants")
+
+maingg <- filter(main, main$aoscategory != "NA")
+
+
+ggplot(data = maingg, aes( y= fct_rev(fct_infreq(aoscategory)))) +
+      geom_bar(fill = "blue") +
+  theme_bw() +
+  theme(axis.text.y=element_text(size=13.4)) +
+  ylab("Specialization") +
+  xlab("Count") +
+  ggtitle("Area of Specialization") +
+  geom_text(stat='count', aes(label = ..count..), hjust = -.4, size = 4.2) +
+  xlim(0,1200) 
+
+maingg2 <- filter(main, main$Tradition != "NA")
+
+ggplot(data = maingg2, aes(x = Tradition)) +
+      geom_bar(fill = "darkgreen") +
+  theme_bw() +
+  ylab("Count") +
+  xlab("Tradition") +
+  geom_text(stat='count', aes(label = ..count..), vjust = -1, size = 3) +
+  ggtitle("Historical Tradition of Participants") +
+  ylim(0,1500)
+
+
+
+ggplot(data = maingg2, aes(x = Nationality)) +
+      geom_bar(fill = "black") +
+  theme_bw() +
+  ylab("Count") +
+  xlab("Region") +
+  geom_text(stat='count', aes(label = ..count..), vjust = -1, size = 3) +
+  ggtitle("Region of Participants") +
+  ylim(0,1500)
+
+
+
+mainplot <- mainsub %>%
+  mutate( 
+         Questions_Answered = sum(c("Abortion", "Apriori","Abstract_Objects","Normativity_or_Metaphysically", "Aesthetic_Value", "Aim_of_Philosophy", "Analytic_synthetic_Distinction", "Eating_Animals_Animal_Products", "Epistemic_Justification", "Experience_Machine", "External_World", "Footbridge", "Free_Will", "Gender_Q", "God", "Knowledge_Claims", "Knowledge", "Laws_of_Nature", "Logic", "Meaning_of_Life", "Mental_Content", "Meta_Ethics", "Metaphilosophy", "Mind", "Moral_Judgement", "Moral_Motivation", "Newcombs_Problem", "Normative_Ethics", "Perceptual_Experience", "Personal_Identity", "Philosophical_Progress", "Political_Philosophy", "Proper_Names", "Race", "Science", "Teletransporter", "Time", "Trolley_Problem", "Truth", "Vagueness", "Zombies", "Aesthetic_Experience", "Analysis_of_Knowledge", "Arguments_for_Theism", "Belief_or_Credence", "Capital_Punishment", "Chinese_Room", "Concepts", "Consciousness", "Continuum_Hypothesis", "Cosmological_fine_tuning", "Environmental_Ethics", "Extended_Mind", "Foundations_of_Mathematics", "Gender_Categories", "Grounds_of_Intentionality", "Hard_Problem_of_Consciousness", "Human_Genetic_Engineering", "Hume", "Immortality", "Interlevel_Metaphysics", "Justification", "Kant", "Law", "Material_Composition", "Metaontology", "Method_in_History_of_Philosophy", "Method_in_Political_Philosophy", "Mind_Uploading", "Moral_Principles", "Morality", "Normative_Concepts", "Ought_Implies_Can", "Philosophical_Knowledge", "Plato", "Politics", "Possible_Worlds", "Practical_Reason", "Principle_of_Sufficient_Reason", "Properties", "Propositional_Attitudes", "Propositions", "Quantum_Mechanics", "Race_Categories", "Rational_Disagreement", "Response_to_External_World_Skepticism", "Semantic_Content", "Sleeping_Beauty", "Spacetime", "Statue_and_Lump", "Temporal_Ontology", "Theory_of_Reference", "Time_Travel", "True_Contradictions", "Units_of_Selection", "Values_in_Science", "Well_Being", "Wittgenstein") != "NA"))
+
+```
